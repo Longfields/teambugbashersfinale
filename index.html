@@ -1,21 +1,13 @@
 <!DOCTYPE html>
 <!--
-Library Admin App V1
-by LeaferStudios@LeaferStudios (https://www.khanacademy.org/profile/kaid_553656479258879622339276/projects)
+Gameapalooza
+Website by LeaferStudios@LeaferStudios (https://www.khanacademy.org/profile/kaid_553656479258879622339276/projects)
+Projects by Team Bug Bashers members
 
-SUBSCRIBE here for more cool stuff:
-https://www.khanacademy.org/computer-programming/leaferstudios/4934504502870016
 
-Prototype 1
-
--Finished August 24, 2024
--Pure ES6 and CSS3
--Over 1700 lines of code
--Extremely customizable CSS using root variables
--12 themes
--Responsive navbar
--Current theme gets saved to browser storage
--Read books with multiple chapters, add/remove books to the cart, delete books from the database, check out books, and view the books and chapters you've read after checkout
+Note to judges:
+Do not edit the code. It will cause the program to break. This uses advanced ES6 JavaScript features which need to be loaded, and some features only work off-KA.
+I used Mushy Avocado's PJS converter library, but it has a bug where the canvas only shows up if you resize the window (in this case the program using the draggable thing seperating the code from the output). I spent a long time trying to fix the bug but it still does not work, and it is not because of my code but because of the converter. So before doing anything, please resize the window!
 
 -->
 <html lang="en">
@@ -24,7 +16,7 @@ Prototype 1
     <meta charset="UTF-8" />
     <meta
       name="description"
-      content="A library app website built with JavaScript by LeaferStudios"
+      content="A game app website built with JavaScript by LeaferStudios featuring games and graphics by Team Bug Bashers"
     />
     <meta name="author" content="LeaferStudios" />
     <meta name="keywords" content="Website" />
@@ -49,7 +41,7 @@ Prototype 1
       href="https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css"
     />
 
-    <title>Library Admin App V1</title>
+    <title>Gameapalooza</title>
     <!-- CSS styles for the app -->
     <style>
       /* Defining CSS variables for theming */
@@ -2095,15 +2087,19 @@ Prototype 1
       }
 
       .sketch {
-        width: fit-content;
-        height: fit-content;
         margin: 0;
         padding: 0;
+        position:absolute;
+        top:0%;
+        width: fit-content;
+        height: fit-content;
+        transform: translate(0%,0%);
+        z-index: 0;
       }
       .wrapper {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+        margin: 0;
+        padding: 0;
+        height: 90vh;
         width: 100%;
       }
     </style>
@@ -2171,8 +2167,8 @@ Prototype 1
           <h2>Your Cart <i class="material-icons">shopping_cart</i></h2>
           <div id="app1cart" class="m-b-2 m-t-2"></div>
 
-          <div id="app1modal">
-            <div id="app1modalContent" style="width: 100%">
+          <div id="app1modal"style="width: 100%;height:100%;">
+            <div id="app1modalContent" style="width: 100%;height:100%;">
               <button
                 onclick="app1modal.closeapp1modal()"
                 style="position: absolute; bottom: 10px; left: 30px"
@@ -2183,21 +2179,21 @@ Prototype 1
                 id="app1bookTitle"
                 style="position: absolute; bottom: 10px; right: 30px"
               ></h3>
-              <div id="app1chapterContent" style="margin-top: -100px">
-                <div class="wrapper"><canvas class="sketch"></canvas></div>
-              </div>
+              <div id="app1chapterContent">
+               
+              </div> <div class="wrapper"><canvas class="sketch"></canvas><canvas class="sketch"></canvas><canvas class="sketch"></canvas><canvas class="sketch"></canvas><canvas class="sketch"></canvas><canvas class="sketch"></canvas><canvas class="sketch"></canvas></div>
               <div id="app1chapterAuthor" style="position: absolute; bottom: 40px;text-align:center;width:100%;">
                
               </div>
               <button
                 id="app1prevChapter"
-                style="position: absolute; bottom: 60px; left: 30px;visibility:hidden;"
+                style="position: absolute; bottom: 60px; left: 30px;visibility:hidden;z-index:9;"
               >
                 <i class="material-icons">arrow_back_ios</i> Previous
               </button>
               <button
                 id="app1nextChapter"
-                style="position: absolute; bottom: 60px; right: 30px;visibility:hidden;"
+                style="position: absolute; bottom: 60px; right: 30px;visibility:hidden;z-index:9;"
               >
                 <i class="material-icons">arrow_forward_ios</i> Next
               </button>
@@ -2264,222 +2260,2659 @@ Prototype 1
       src="https://cdn.jsdelivr.net/gh/Khan/processing-js@master/processing.js"
     ></script>
     <script
-      type="text/javascript"
-      src="https://cdn.jsdelivr.net/gh/Mushy-Avocado/KA-exporter@main/exporter.js"
-    ></script>
+      type="application/javascript"
+     >
+     // BY MushyAvocado (I used this instead of the CDN since I had to edit the resize function):
+     //https://cdn.jsdelivr.net/gh/Mushy-Avocado/KA-exporter@main/exporter.js
+     (function() {
+
+	var loadID = Date.now();
+	window.currentLoad = loadID;
+
+	// Warn about Firefox - it has poor performance
+	(function() {
+		let warnedFirefox = !navigator.userAgent.toLowerCase().includes('firefox') || localStorage.getItem('warnedFirefox');
+		if (!warnedFirefox) {
+			alert("This game uses Processing.js, which has poor performance in Firefox. It is strongly recommended you open this in Chrome.");
+			localStorage.setItem('warnedFirefox', true);
+		}
+	})();
+
+	function getFunctionBody(func) {
+		if (typeof func === "function") {
+			func = func.toString();
+		}
+		return func.substring(func.indexOf("{") + 1, func.lastIndexOf("}"));
+	}
+	// Whether a url has a file extension or not.
+	function hasFileExtension(source) {
+		var a = source.split('/');
+		return a[a.length - 1].includes('.');
+	}
+	// Caches assets to load before the program starts for preloading
+	const assets = (function() {
+		let cache = {};
+		let imageURLs = [],
+			soundURLs = [];
+		let currentProgress = 0;
+
+		function loadCache() {
+			return Promise.all([
+				// Load cached image URLs
+				new Promise((resolve, reject) => {
+					let index = 0,
+						next = () => {
+							currentProgress++;
+							if (++index >= imageURLs.length) resolve();
+						};
+					if (imageURLs.length === 0) return void resolve();
+					imageURLs.forEach(url => {
+						cache[url] = new Image();
+						cache[url].crossOrigin = "anonymous";
+						cache[url].onload = next;
+						cache[url].onerror = next
+						cache[url].src = url;
+					});
+				}).catch(console.error),
+				// Load cached sound URLs
+				new Promise((resolve, reject) => {
+					let index = 0,
+						next = () => {
+							currentProgress++;
+							if (++index >= soundURLs.length) resolve();
+						};
+					if (soundURLs.length === 0) return void resolve();
+					soundURLs.forEach(url => {
+						cache[url] = new Audio(url);
+						cache[url].crossOrigin = "anonymous";
+						cache[url].oncanplaythrough = next;
+						cache[url].onerror = next;
+					});
+				}).catch(console.error),
+			]);
+		}
+		const assetRoot = '/';
+		return {
+			// Loading progress (between 0-1)
+			get progress() {
+				return currentProgress / (soundURLs.length + imageURLs.length);
+			},
+			load: loadCache,
+			cache: cache,
+			cacheImageURL: url => {
+				if (imageURLs.indexOf(url) !== -1) return;
+				imageURLs.push(url);
+			},
+			cacheSoundURL: url => {
+				if (soundURLs.indexOf(url) !== -1) return;
+				soundURLs.push(url);
+			},
+			getImageURL: source => {
+				if (window.location.href.includes("kasandbox.org"))
+					source = "https://cdn.kastatic.org/third_party/javascript-khansrc/live-editor/build/images/" + source + ".png";
+				else if (!source.startsWith(assetRoot + 'images'))
+					source = assetRoot + 'images/' + source;
+				if (!hasFileExtension(source))
+					source += '.png';
+				return source;
+			},
+			getSoundURL: source => {
+				if (window.location.href.includes("kasandbox.org"))
+					source = "https://cdn.kastatic.org/third_party/javascript-khansrc/live-editor/sounds/" + source;
+				else if (!source.startsWith(assetRoot + 'sounds'))
+					source = assetRoot + 'sounds/' + source;
+				if (!hasFileExtension(source))
+					source += '.mp3';
+				return source;
+			},
+		};
+	})();
+	const fullscreen = (function() {
+		function enableFullscreen() {
+			if (document.documentElement.reqestFullscreen) {
+				document.documentElement.requestFullscreen();
+			} else if (document.documentElement.mozRequestFullScreen) {
+				document.documentElement.mozRequestFullScreen();
+			} else if (document.documentElement.webkitRequestFullscreen) {
+				document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+			}
+		}
+
+		function disableFullscreen() {
+			if (document.exitFullScreen) {
+				document.exitFullScreen();
+			} else if (document.mozExitFullScreen) {
+				document.mozExitFullScreen();
+			} else if (document.webkitExitFullScreen) {
+				document.webkitExitFullScreen();
+			}
+			if (document.cancelFullScreen) {
+				document.cancelFullScreen();
+			} else if (document.mozCancelFullScreen) {
+				document.mozCancelFullScreen();
+			} else if (document.webkitCancelFullScreen) {
+				document.webkitCancelFullScreen();
+			}
+		}
+
+		function isFullscreen() {
+			return document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement;
+		}
+		// Fullscreen toggle
+		function toggleFullscreen() {
+			if (!isFullscreen())
+				enableFullscreen();
+			else
+				disableFullscreen();
+		}
+		return {
+			enable: enableFullscreen,
+			disable: disableFullscreen,
+			toggle: toggleFullscreen,
+		};
+	})();
+	// Loaded assets that are ready for PJS to use
+	const pjsImages = {},
+		pjsSounds = {};
+	// Initializes the program to make it load
+	window.importerKA = function(processing, canvas) {
+		const layout = (function(canvas) {
+			// Updates the scale of the canvas to fit its parent element
+			function updateScaling() {
+				var parent = canvas.parentElement;
+				let parentRect = parent.getBoundingClientRect();
+				var parentWidth = parentRect.right - parentRect.left;
+				var parentHeight = parentRect.bottom - parentRect.top;
+				var scaleX = parentWidth / canvas.width;
+				var scaleY = parentHeight / canvas.height;
+				if (Math.min(scaleX, scaleY) > 1) {
+					canvas.style.scale = 1;
+					return;
+				}
+				canvas.style.scale = Math.min(scaleX, scaleY);
+			};
+			return {
+				update: function() {
+					updateScaling();
+				},
+			}
+		})(canvas);
+		// Subsribe to various events to update the layout.
+		screen.orientation.addEventListener("change", layout.update);
+		window.addEventListener("resize", layout.update);
+		window.addEventListener("load", layout.update);
+		// To fix an issue where Processing.js throws an error on mobile and breaks the layout
+		window.addEventListener("touchstart", () => layout.update(), {
+			once: true,
+		});
+		
+		// Apply defaults
+		processing.size(400, 400);
+		processing.angleMode = "degrees";
+		processing.draw = function() {}; // draw() needs a value for PJS to run it
+		var doResize = true;
+		var canvasScaleX = 1;
+		var canvasScaleY = 1;
+		// Tells processing.js what the width and height actually is for certain rendering functions
+		function pushSize() {
+			processing.width *= canvasScaleX;
+			processing.height *= canvasScaleY;
+		}
+
+		function popSize() {
+			processing.width /= canvasScaleX;
+			processing.height /= canvasScaleY;
+		}
+		// Save old copies of PJS functions
+		const old = {
+			get: processing.get.bind(processing),
+			image: processing.image.bind(processing),
+			loadImage: processing.loadImage.bind(processing),
+			background: processing.background.bind(processing),
+			resetMatrix: processing.resetMatrix.bind(processing),
+			filter: processing.filter.bind(processing),
+			loadImage: processing.loadImage.bind(processing),
+		};
+
+		function snapToIncrement(val, increment) {
+			return Math.ceil(val / increment) * increment;
+		}
+		// Resizes the canvas to render at a higher resolution.
+		const resize = function(width, height) {
+			let scaleIncrement = Math.min(processing.width, processing.height) / 2;
+			if (!doResize) return;
+			width = snapToIncrement(width, scaleIncrement);
+			height = snapToIncrement(height, scaleIncrement);
+			// Match to the aspect ratio of the canvas
+			width = height * (processing.width / processing.height);
+			height = height;
+			canvas.width = width;
+			canvas.height = height;
+			canvasScaleX = width / processing.width;
+			canvasScaleY = height / processing.height;
+			old.resetMatrix();
+			processing.scale(canvasScaleX, canvasScaleY);
+			layout.update();
+		};
+		// Size only sets the actual variable "width" and "height". resize() takes care of the rest.
+		processing.size = function(w, h) {
+			processing.width = w;
+			processing.height = h;
+			var w = window.parent !== window.top ? document.body.clientWidth : screen.width;
+			var h = window.parent !== window.top ? document.body.clientHeight : screen.height;
+			var targetW = w;
+			var targetH = h;
+			resize(targetW, targetH);
+			layout.update();
+			processing.background(255);
+		};
+		// Sets the title for the project
+		processing.title = function(value) {
+			document.title = value;
+		};
+		// Override loadImage and getImage.
+		// Image files should be stored in /images/filePath
+		processing.loadImage = processing.getImage = function(source) {
+			source = assets.getImageURL(source);
+			if (!pjsImages[source]) {
+				if (assets.cache[source]) {
+					let pimg = new processing.PImage(),
+						img = assets.cache[source];
+					pimg.fromHTMLImageData(img);
+					pimg.loaded = true;
+					pjsImages[source] = pimg;
+				} else {
+					pjsImages[source] = old.loadImage(source);
+					pjsImages[source].sourceImg.crossOrigin = "anonymous";
+					assets.cacheImageURL(source);
+				}
+			}
+			return pjsImages[source];
+		}
+		// Override getSound and playSound.
+		// Sound files should be stored in /sounds/filePath
+		processing.getSound = function(source) {
+			source = assets.getSoundURL(source);
+			if (!pjsSounds[source]) {
+				pjsSounds[source] = assets.cache[source] || new Audio(source);
+				pjsSounds[source].audio = pjsSounds[source];
+			}
+			return pjsSounds[source];
+		}
+		processing.playSound = function(sound, volume = 1) {
+			sound.volume = volume;
+			sound.currentTime = 0;
+			sound.play().catch(e => {
+				console.warn(e);
+			});
+		}
+		// Draws at the correct scale when no width and height are given
+		processing.image = function(img, x, y, w, h) {
+			if (!w && !h)
+				old.image(img, x, y, img.width / (img.originScaleX || 1), img.height / (img.originScaleY || 1));
+			else old.image(img, x, y, w, h);
+		};
+		// Captures the correct part of the screen
+		processing.get = function() {
+			var ret;
+			if (arguments.length == 0)
+				ret = old.get(0, 0, canvas.width, canvas.height);
+			else if (arguments.length == 2)
+				ret = old.get(arguments[0] * canvasScaleX, arguments[1] * canvasScaleY);
+			else
+				ret = old.get(arguments[0] * canvasScaleX, arguments[1] * canvasScaleY, arguments[2] * canvasScaleX, arguments[3] * canvasScaleY);
+			// Makes sure the images are rendered correctly at a different scale
+			ret.originScaleX = canvasScaleX;
+			ret.originScaleY = canvasScaleY;
+			return ret;
+		};
+		// Makes sure these render on the whole canvas
+		processing.background = function(...args) {
+			pushSize();
+			old.background.apply(processing, args);
+			popSize();
+		};
+		processing.filter = function(...args) {
+			pushSize();
+			old.filter.apply(processing, args);
+			popSize();
+		};
+		// Makes sure the canvas is still scaled correctly
+		processing.resetMatrix = function() {
+			old.resetMatrix();
+			processing.scale(canvasScaleX, canvasScaleY);
+		};
+		processing.debug = console.log.bind(console);
+		processing.Program = {
+			restart: window.location.reload.bind(window),
+			assertEqual: console.warn.bind(console),
+		};
+		// Update mouse coordinates
+		window.addEventListener("mousemove", function(e) {
+			processing.mouseX = processing.canvasX(e.clientX);
+			processing.mouseY = processing.canvasY(e.clientY);
+		});
+		// Scales an axis based on the size of the canvas
+		// Takes a screen position as input
+		processing.canvasX = function(x) {
+			var clientRect = canvas.getBoundingClientRect();
+			var scaleX = clientRect.width / (processing.width * canvasScaleX);
+			return (x - clientRect.left) / (scaleX * canvasScaleX);
+		};
+		processing.canvasY = function(y) {
+			var clientRect = canvas.getBoundingClientRect();
+			var scaleY = clientRect.height / (processing.height * canvasScaleY);
+			return (y - clientRect.top) / (scaleY * canvasScaleY);
+		};
+		// Sets/toggles the fullscreen state
+		processing.fullscreen = function(bool) {
+			if (bool == true) fullscreen.enable();
+			else if (bool == false) fullscreen.disable();
+			else fullscreen.toggle();
+		};
+		// Disabled scaling the canvas to be fullscreen
+		processing.noResize = function() {
+			resize(processing.width, processing.height);
+			doResize = false;
+		};
+		processing.noCursor = function() {
+			processing.cursor("none");
+		};
+		window.LoopProtector = function() {};
+		processing.KAInfiniteLoopSetTimeout = () => {};
+		processing.externals = {
+			canvas: canvas,
+			context: canvas.getContext("2d"),
+		};
+		layout.update();
+	}
+
+	let pjsInstanceCount = 0;
+	window.runPJS = async function(program) {
+
+		const programString = program.toString();
+		// Find all getImage() or loadImage() calls to preload before the program starts
+		(function() {
+			const imageURLs = [
+				"animals/boxer-laying-down",
+				"animals/butterfly",
+				"animals/cat",
+				"animals/collies",
+				"animals/dog_sleeping-puppy",
+				"animals/fox",
+				"animals/kangaroos",
+				"animals/rabbit",
+				"animals/shark",
+				"animals/sleeping-puppy",
+				"creatures/Hopper-Jumping",
+				"avatars/aqualine-sapling",
+				"avatars/aqualine-seed",
+				"avatars/aqualine-seedling",
+				"avatars/aqualine-tree",
+				"avatars/aqualine-ultimate",
+				"avatars/avatar-team",
+				"avatars/cs-hopper-cool",
+				"avatars/cs-hopper-happy",
+				"avatars/cs-hopper-jumping",
+				"avatars/cs-ohnoes",
+				"avatars/cs-winston-baby",
+				"avatars/cs-winston",
+				"avatars/duskpin-sapling",
+				"avatars/duskpin-seed",
+				"avatars/duskpin-seedling",
+				"avatars/duskpin-tree",
+				"avatars/duskpin-ultimate",
+				"avatars/leaf-blue",
+				"avatars/leaf-green",
+				"avatars/leaf-grey",
+				"avatars/leaf-orange",
+				"avatars/leaf-red",
+				"avatars/leaf-yellow",
+				"avatars/leafers-sapling",
+				"avatars/leafers-seed",
+				"avatars/leafers-seedling",
+				"avatars/leafers-tree",
+				"avatars/leafers-ultimate",
+				"avatars/marcimus-orange",
+				"avatars/marcimus-purple",
+				"avatars/marcimus-red",
+				"avatars/marcimus",
+				"avatars/mr-pants-green",
+				"avatars/mr-pants-orange",
+				"avatars/mr-pants-pink",
+				"avatars/mr-pants-purple",
+				"avatars/mr-pants-with-hat",
+				"avatars/mr-pants",
+				"avatars/mr-pink-green",
+				"avatars/mr-pink-orange",
+				"avatars/mr-pink",
+				"avatars/mystery-2",
+				"avatars/old-spice-man-blue",
+				"avatars/old-spice-man",
+				"avatars/orange-juice-squid",
+				"avatars/piceratops-sapling",
+				"avatars/piceratops-seed",
+				"avatars/piceratops-seedling",
+				"avatars/piceratops-tree",
+				"avatars/piceratops-ultimate",
+				"avatars/primosaur-sapling",
+				"avatars/primosaur-seed",
+				"avatars/primosaur-seedling",
+				"avatars/primosaur-tree",
+				"avatars/primosaur-ultimate",
+				"avatars/purple-pi-pink",
+				"avatars/purple-pi-teal",
+				"avatars/purple-pi",
+				"avatars/questionmark",
+				"avatars/robot_female_1",
+				"avatars/robot_female_2",
+				"avatars/robot_female_3",
+				"avatars/robot_male_1",
+				"avatars/robot_male_2",
+				"avatars/robot_male_3",
+				"avatars/spunky-sam-green",
+				"avatars/spunky-sam-orange",
+				"avatars/spunky-sam-red",
+				"avatars/spunky-sam",
+				"avatars/starky-sapling",
+				"avatars/starky-seed",
+				"avatars/starky-seedling",
+				"avatars/starky-tree",
+				"avatars/starky-ultimate",
+				"creatures/BabyWinston",
+				"creatures/Hopper-Cool",
+				"creatures/Hopper-Happy",
+				"creatures/OhNoes-Happy",
+				"creatures/OhNoes-Hmm",
+				"creatures/OhNoes",
+				"creatures/Winston",
+				"cute/Blank",
+				"cute/BrownBlock",
+				"cute/CharacterBoy",
+				"cute/CharacterCatGirl",
+				"cute/CharacterHornGirl",
+				"cute/CharacterPinkGirl",
+				"cute/CharacterPrincessGirl",
+				"cute/ChestClosed",
+				"cute/ChestLid",
+				"cute/ChestOpen",
+				"cute/DirtBlock",
+				"cute/DoorTallClosed",
+				"cute/DoorTallOpen",
+				"cute/EnemyBug",
+				"cute/GemBlue",
+				"cute/GemGreen",
+				"cute/GemOrange",
+				"cute/GrassBlock",
+				"cute/Heart",
+				"cute/Key",
+				"cute/None",
+				"cute/PlainBlock",
+				"cute/RampEast",
+				"cute/RampNorth",
+				"cute/RampSouth",
+				"cute/RampWest",
+				"cute/Rock",
+				"cute/RoofEast",
+				"cute/RoofNorth",
+				"cute/RoofNorthEast",
+				"cute/RoofNorthWest",
+				"cute/RoofSouth",
+				"cute/RoofSouthEast",
+				"cute/RoofSouthWest",
+				"cute/RoofWest",
+				"cute/Selector",
+				"cute/ShadowEast",
+				"cute/ShadowNorth",
+				"cute/ShadowNorthEast",
+				"cute/ShadowNorthWest",
+				"cute/ShadowSideWest",
+				"cute/ShadowSouth",
+				"cute/ShadowSouthEast",
+				"cute/ShadowSouthWest",
+				"cute/ShadowWest",
+				"cute/Star",
+				"cute/StoneBlock",
+				"cute/StoneBlockTall",
+				"cute/TreeShort",
+				"cute/TreeTall",
+				"cute/TreeUgly",
+				"cute/WallBlock",
+				"cute/WallBlockTall",
+				"cute/WaterBlock",
+				"cute/WindowTall",
+				"cute/WoodBlock",
+				"food/berries",
+				"food/brussels-sprouts",
+				"food/coffee-beans",
+				"food/fish_grilled-snapper",
+				"food/grapes",
+				"food/ice-cream",
+				"food/oysters",
+				"food/potato-chips",
+				"food/shish-kebab",
+				"food/tomatoes",
+				"insideout/layer0blur0",
+				"insideout/layer0blur10",
+				"insideout/layer0blur20",
+				"insideout/layer0blur40",
+				"insideout/layer0blur80",
+				"insideout/layer1blur0",
+				"insideout/layer1blur10",
+				"insideout/layer1blur20",
+				"insideout/layer1blur40",
+				"insideout/layer1blur80",
+				"insideout/layer2blur0",
+				"insideout/layer2blur10",
+				"insideout/layer2blur20",
+				"insideout/layer2blur40",
+				"insideout/layer2blur80",
+				"insideout/layer3blur0",
+				"insideout/layer3blur10",
+				"insideout/layer3blur100",
+				"insideout/layer3blur20",
+				"insideout/layer3blur40",
+				"insideout/layer3blur80",
+				"insideout/shot1_layer0blur0",
+				"insideout/shot1_layer0blur10",
+				"insideout/shot1_layer0blur20",
+				"insideout/shot1_layer0blur40",
+				"insideout/shot1_layer0blur80",
+				"insideout/shot1_layer1blur0",
+				"insideout/shot1_layer1blur10",
+				"insideout/shot1_layer1blur20",
+				"insideout/shot1_layer1blur40",
+				"insideout/shot1_layer1blur80",
+				"insideout/shot1_layer2blur0",
+				"insideout/shot1_layer2blur10",
+				"insideout/shot1_layer2blur20",
+				"insideout/shot1_layer2blur40",
+				"insideout/shot1_layer2blur80",
+				"insideout/shot1_layer3blur0",
+				"insideout/shot1_layer3blur10",
+				"insideout/shot1_layer3blur20",
+				"insideout/shot1_layer3blur40",
+				"insideout/shot1_layer3blur80",
+				"insideout/shot1_layer4blur0",
+				"insideout/shot1_layer4blur10",
+				"insideout/shot1_layer4blur20",
+				"insideout/shot1_layer4blur40",
+				"insideout/shot1_layer4blur80",
+				"insideout/shot1_layer5blur0",
+				"insideout/shot1_layer5blur10",
+				"insideout/shot1_layer5blur20",
+				"insideout/shot1_layer5blur40",
+				"insideout/shot1_layer5blur80",
+				"insideout/shot2_layer0blur10",
+				"insideout/shot2_layer0blur20",
+				"insideout/shot2_layer0blur40",
+				"insideout/shot2_layer0blur80",
+				"insideout/shot2_layer1blur10",
+				"insideout/shot2_layer1blur20",
+				"insideout/shot2_layer1blur40",
+				"insideout/shot2_layer1blur80",
+				"insideout/shot2_layer2blur10",
+				"insideout/shot2_layer2blur20",
+				"insideout/shot2_layer2blur40",
+				"insideout/shot2_layer2blur80",
+				"insideout/shot2_layer3blur10",
+				"insideout/shot2_layer3blur20",
+				"insideout/shot2_layer3blur40",
+				"insideout/shot2_layer3blur80",
+				"insideout/shot2_layer4blur10",
+				"insideout/shot2_layer4blur20",
+				"insideout/shot2_layer4blur40",
+				"insideout/shot2_layer4blur80",
+				"landscapes/beach-in-hawaii",
+				"landscapes/beach-waves-at-sunset",
+				"landscapes/beach-waves-at-sunset2",
+				"landscapes/beach-waves-daytime",
+				"landscapes/clouds-from-plane",
+				"landscapes/fields-of-grain",
+				"landscapes/lake-steam-rising",
+				"landscapes/lava",
+				"landscapes/mountain_matterhorn",
+				"landscapes/mountains-and-lake",
+				"landscapes/sand-dunes",
+				"misc/tim-berners-lee",
+				"pixar/Incredibles_a_fill",
+				"pixar/Incredibles_a_fill_wFog",
+				"pixar/Incredibles_a_key",
+				"pixar/Incredibles_a_key_wFog",
+				"pixar/Incredibles_bnc",
+				"pixar/Incredibles_fillExt",
+				"pixar/Incredibles_fillInt",
+				"pixar/Incredibles_fill_wFog",
+				"pixar/Incredibles_kck",
+				"pixar/Incredibles_key",
+				"pixar/Incredibles_key_wFog",
+				"pixar/Incredibles_target",
+				"pixar/army2",
+				"pixar/bing1",
+				"pixar/bing2",
+				"pixar/cars1",
+				"pixar/food1",
+				"pixar/lamp",
+				"pixar/rat_1",
+				"pixar/rat_2",
+				"pixar/rat_3",
+				"scratchpads/colorpicker_hsb_b",
+				"scratchpads/colorpicker_hsb_s",
+				"scratchpads/colorpicker_overlay",
+				"scratchpads/colorpicker_rgb_g",
+				"scratchpads/colorpicker_select",
+				"scratchpads/cool-critter",
+				"scratchpads/error-buddy",
+				"scratchpads/happy-critter",
+				"scratchpads/jumping-critter",
+				"scratchpads/leaf-green",
+				"scratchpads/leaf-orange",
+				"scratchpads/leaf-red",
+				"scratchpads/leaf-yellow",
+				"scratchpads/speech-arrow",
+				"scratchpads/topic-drawing",
+				"scratchpads/topic-user-interaction",
+				"seasonal/father-winston",
+				"seasonal/fireworks-in-sky",
+				"seasonal/fireworks-scattered",
+				"seasonal/gingerbread-house",
+				"seasonal/gingerbread-man",
+				"seasonal/hannukah-menorah",
+				"seasonal/hopper-partying",
+				"seasonal/house-with-lights",
+				"seasonal/reindeer-with-hat",
+				"seasonal/snow-crystal1",
+				"seasonal/snow-crystal3",
+				"seasonal/snownoes",
+				"seasonal/stocking-empty",
+				"seasonal/xmas-ornament-boat",
+				"seasonal/xmas-ornaments",
+				"seasonal/xmas-scene-holly-border",
+				"seasonal/xmas-tree",
+				"space/0",
+				"space/1",
+				"space/2",
+				"space/3",
+				"space/4",
+				"space/5",
+				"space/6",
+				"space/7",
+				"space/8",
+				"space/9",
+				"space/background",
+				"space/beetleship",
+				"space/collisioncircle",
+				"space/girl1",
+				"space/girl2",
+				"space/girl3",
+				"space/girl4",
+				"space/girl5",
+				"space/healthheart",
+				"space/minus",
+				"space/octopus",
+				"space/planet",
+				"space/plus",
+				"space/rocketship",
+				"space/star",
+				"animals/birds_rainbow-lorakeets",
+				"animals/komodo-dragon",
+				"animals/snake_green-tree-boa",
+				"landscapes/beach-sunset",
+				"landscapes/beach-with-palm-trees",
+				"landscapes/fields-of-wine",
+				"landscapes/mountains-in-hawaii",
+				"food/bananas",
+				"food/cake",
+				"food/croissant",
+				"food/fruits",
+				"food/strawberries",
+				"animals/cheetah",
+				"animals/butterfly_monarch",
+				"animals/crocodiles",
+				"animals/dogs_collies",
+				"animals/horse",
+				"animals/penguins",
+				"animals/retriever",
+				"animals/spider",
+				"landscapes/beach-at-dusk",
+				"landscapes/beach",
+				"landscapes/crop-circle",
+				"landscapes/lake",
+				"landscapes/lotus-garden",
+				"landscapes/mountains-sunset",
+				"landscapes/waterfall_niagara-falls",
+				"food/broccoli",
+				"food/chocolates",
+				"food/dumplings",
+				"food/hamburger",
+				"food/mushroom",
+				"food/pasta",
+				"food/potatoes",
+				"food/sushi",
+				"seasonal/fireworks-2015",
+				"seasonal/fireworks-over-harbor",
+				"seasonal/gingerbread-family",
+				"seasonal/gingerbread-houses",
+				"seasonal/hannukah-dreidel",
+				"seasonal/hopper-elfer",
+				"seasonal/hopper-reindeer",
+				"seasonal/reindeer",
+				"seasonal/snow-crystal2",
+				"seasonal/snowy-slope-with-trees",
+				"seasonal/xmas-cookies",
+				"seasonal/xmas-ornament-on-tree",
+				"seasonal/xmas-presents",
+				"seasonal/xmas-tree-with-presents",
+				"seasonal/xmas-wreath",
+				"pixar/army1",
+				"pixar/bedspread",
+				"pixar/bopeep",
+				"pixar/floorplanes",
+				"scratchpads/colorpicker_background",
+				"scratchpads/colorpicker_submit",
+				"scratchpads/colorpicker_rgb_r",
+				"scratchpads/colorpicker_rgb_b",
+				"scratchpads/colorpicker_hsb_h",
+				"scratchpads/colorpicker_hex",
+				"scratchpads/colorpicker_indic",
+				"scratchpads/ui-icons_808080_256x240",
+				"scratchpads/topic-programming-basics",
+				"scratchpads/topic-animation",
+				"scratchpads/select",
+				"seasonal/disco-ball",
+				"misc/boxmodel",
+				"seasonal/snowman",
+				"seasonal/santa-with-bag",
+				"seasonal/penguin-with-presents",
+				"animals/boxer-getting-tan",
+				"animals/boxer-wagging-tongue",
+				"misc/tim-berners-lee-webpage",
+				"seasonal/red-nosed-winston",
+				"avatars/mystery-1",
+				"insideout/shot2_layer0blur0",
+				"insideout/shot2_layer1blur0",
+				"insideout/shot2_layer2blur0",
+				"insideout/shot2_layer4blur0",
+				"insideout/shot2_layer3blur0",
+				"pixar/rat_2",
+				"pixar/luxoball",
+				"pixar/buzz",
+				"pixar/ham",
+			];
+			const imageRegex = /\b((load|get)Image)\s*\(\s*(['"])(.*?)\3\s*\)/g;
+			let match;
+			while ((match = imageRegex.exec(programString)) !== null) {
+				if (match[4] && !imageURLs.includes(match[4])) {
+					console.log("Preloading image: " + match[4]);
+					assets.cacheImageURL(assets.getImageURL(match[4]));
+				}
+			}
+			imageURLs.forEach(url => {
+				if (programString.includes(url)) {
+					console.log("Preloading image: " + url);
+					assets.cacheImageURL(assets.getImageURL(url));
+				}
+			});
+		})();
+		// Find all getSound() calls to preload
+		(function() {
+			const rpg = [
+				"battle-magic",
+				"battle-spell",
+				"battle-swing",
+				"coin-jingle",
+				"door-open",
+				"giant-hyah",
+				"giant-no",
+				"giant-yah",
+				"hit-clop",
+				"hit-splat",
+				"hit-thud",
+				"hit-whack",
+				"metal-chime",
+				"metal-clink",
+				"step-heavy",
+				"water-bubble",
+				"water-slosh",
+			];
+			const retro = [
+				"boom1",
+				"boom2",
+				"coin",
+				"hit1",
+				"hit2",
+				"jump1",
+				"jump2",
+				"laser1",
+				"laser2",
+				"laser3",
+				"laser4",
+				"rumble",
+				"thruster-short",
+				"thruster-long",
+				"whistle1",
+				"whistle2",
+			];
+			const sounds = [];
+			const soundRegex = /\b(getSound)\s*\(\s*(['"])(.*?)\2\s*\)/g;
+			let match;
+			rpg.forEach(url => sounds.push("rpg/" + url));
+			retro.forEach(url => sounds.push("retro/" + url));
+			while ((match = soundRegex.exec(programString)) !== null) {
+				if (match[3] && !sounds.includes(match[3])) {
+					console.log("Preloading sound: " + match[3]);
+					assets.cacheSoundURL(assets.getSoundURL(match[3]));
+				}
+			}
+			sounds.forEach(url => {
+				if (programString.includes(url)) {
+					console.log("Preloading sound: " + url);
+					assets.cacheSoundURL(assets.getSoundURL(url));
+				}
+			});
+		})();
+		const index = pjsInstanceCount++;
+		// Make sure the correct Processing.js library is loaded
+		const pjsLoaded = new Promise((resolve, reject) => {
+			const pjsURL = 'https://cdn.jsdelivr.net/gh/Khan/processing-js@master/processing.js';
+			if (!document.querySelector(`script[src='${pjsURL}']`)) {
+				let script = document.createElement("script");
+				script.src = pjsURL;
+				script.type = "text/javascript";
+				script.onload = () => {
+					console.log("Processing.js library loaded from URL " + pjsURL);
+					resolve();
+				};
+				document.head.appendChild(script);
+			} else return void resolve();
+		});
+
+		await Promise.all([
+			pjsLoaded,
+			assets.load(),
+		]);
+
+		if (window.currentLoad !== loadID) {
+			return;
+		}
+
+		const script = document.createElement("script");
+		script.innerHTML = `
+		var __pjsIndex = ${index};
+		var canvas = window.__globalCanvas = document.getElementsByClassName("sketch")[__pjsIndex];
+		if (!canvas) {
+			throw "KA Exporter: Failed to load sketch: Missing a canvas element in the HTML with an class name of 'sketch'. If you load multiple PJS scripts make sure you have a matching number of canvas tags.";
+		}
+		var __processing = processing = new Processing(canvas, proc => {
+			window.importerKA(proc, canvas);
+		});
+		processing.strokeCap(processing.ROUND);
+		processing.background(255, 255, 255);
+		Object.keys(processing).forEach(key => {
+			if (!window[key]) {
+				try {
+					window[key] = processing[key];
+				} catch(e) {
+
+				}
+			}
+		});
+		(function() {
+			with (__processing) {
+				canvas.addEventListener("keydown", event => {
+					if (event.key === "F11") {
+						fullscreen();
+					}
+				});
+				${getFunctionBody(program)}
+				if (typeof draw !== "undefined") {
+				    var old = draw;
+    					__processing.draw = function() {
+						window.__frameRate = processing.__frameRate;
+      						old.call(__processing);
+      					};
+				}
+				console.log("---Processing sketch sucessfully loaded---");
+			}
+		}).call(__processing);
+				`;
+		script.type = "text/javascript";
+		document.body.appendChild(script);
+	};
+	window.parent.html2canvas = function() {
+		let thumbnailCanvas = document.createElement("canvas");
+		let context = thumbnailCanvas.getContext("2d");
+		thumbnailCanvas.width = "200";
+		thumbnailCanvas.height = "200";
+		context.drawImage(window.__globalCanvas, 0, 0, window.__globalCanvas.width, window.__globalCanvas.height, 0, 0, 200, 200);
+		console.log("Saving canvas data from ", window.__globalCanvas);
+		window.top.postMessage(thumbnailCanvas.toDataURL(), "*");
+	};
+})();</script>
     <script>
       console.log("Program ran.");
     </script>
-    <script type="application/javascript"></script>
-    <script type="application/javascript">
-      var iterator = 0;
-      function program() {
-        println(iterator);
-        setTimeout(function(){
-          
-        if (iterator === 0) {
-        size(400, 600);
-          // All code goes here
-          /*
-        mirror
-    
-        hi, dw im not leaving ka, but im going like 1/10-active.
-        
-        i’ve been having dpdr for a while now and ive only told my closest friends… i just wanna take a little break from the screen to see if it helps lol
-        i’ll still come online to ka for a quick glance at the hl lol often, but i don’t think i’ll be making programs in a while
-        this graphics just shows what it feels like rn, its like watching myself through the mirror - connected but not really. and yeah i have associative synesthesia so like the grayness is what dpdr feels like and the colors in the reflection are reality in color, sort of. dpdr is weird and kind of scary but hopefully this will be over when i actually face it instead of ignoring it
-        i also do feel like i don’t really know myself, partially because of dpdr and partially because i’ve always tried to blend in 
-        i probably need to tell my fam but as a procrastinator ive been putting that off for like years now lol
-        
-        @bugbashers - im sry but i don’t think ill be active for the final project, wishing you guys luck <3
-        
-        this took ~2 hours
-        sorry it's bad lol and possibly laggy
-    
-    */
-
-          //hand
-          function hand(x, y, s) {
-            pushMatrix();
-            scale(s, 1);
-            translate(x, y);
-            beginShape();
-            curveVertex(111, 408);
-            curveVertex(210, 381);
-            curveVertex(246, 346);
-            curveVertex(268, 321);
-            curveVertex(275, 312);
-            curveVertex(268, 308);
-            curveVertex(246, 313);
-            curveVertex(219, 338);
-            curveVertex(203, 338);
-            curveVertex(196, 322);
-            curveVertex(210, 284);
-            curveVertex(224, 261);
-            curveVertex(242, 244);
-            curveVertex(261, 230);
-            curveVertex(262, 219);
-            curveVertex(234, 229);
-            curveVertex(206, 251);
-            curveVertex(188, 275);
-            curveVertex(194, 264);
-            curveVertex(201, 249);
-            curveVertex(219, 226);
-            curveVertex(230, 208);
-            curveVertex(230, 198);
-            curveVertex(224, 195);
-            curveVertex(207, 214);
-            curveVertex(183, 238);
-            curveVertex(171, 269);
-            curveVertex(184, 239);
-            curveVertex(197, 224);
-            curveVertex(203, 211);
-            curveVertex(197, 202);
-            curveVertex(177, 232);
-            curveVertex(169, 248); //
-            curveVertex(165, 254);
-            curveVertex(156, 284);
-            curveVertex(166, 257);
-            curveVertex(169, 241);
-            curveVertex(165, 231);
-            curveVertex(161, 235);
-            curveVertex(146, 272);
-            curveVertex(140, 303);
-            curveVertex(134, 330);
-            curveVertex(125, 359);
-            curveVertex(107, 387);
-            curveVertex(-9, 569);
-            curveVertex(48, 615);
-            curveVertex(123, 476);
-            curveVertex(152, 426);
-            curveVertex(178, 398);
-            curveVertex(198, 386);
-            curveVertex(210, 381);
-            endShape();
-            popMatrix();
-          }
-
-          //bg?
-          background(111, 109, 130);
-          noStroke();
-
-          //reflection
-          fill(54, 42, 42);
-          hand(-669, 0, -0.7);
-
-          //colors
-          var f = createGraphics(width, height, P2D);
-          f.translate(18, 88);
-          f.background(0, 0);
-          f.noStroke();
-          f.fill(106, 166, 66, 150);
-          f.ellipse(117, 184, 250, 350);
-          f.fill(194, 189, 97, 150);
-          f.ellipse(103, 408, 350, 250);
-          f.fill(184, 131, 66, 150);
-          f.ellipse(250, 444, 250, 250);
-          f.fill(184, 94, 66, 150);
-          f.ellipse(462, 334, 250, 350);
-          f.fill(184, 66, 66, 150);
-          f.ellipse(346, 118, 212, 223);
-          f.filter(BLUR, 45);
-          image(f, 0, 0);
-
-          //reflections
-          var r = createGraphics(width, height, P2D);
-          r.translate(9, -30);
-          r.scale(1.2);
-          r.background(0, 0);
-          r.noStroke();
-          r.fill(255, 70);
-          r.beginShape();
-          r.vertex(186, 93);
-          r.vertex(74, 379);
-          r.vertex(99, 458);
-          r.vertex(288, 24);
-          r.vertex(336, 68);
-          r.vertex(177, 473);
-          r.vertex(245, 555);
-          r.vertex(376, 121);
-          r.vertex(364, 6);
-          r.vertex(204, 54);
-          r.vertex(187, 93);
-          r.endShape();
-          r.filter(BLUR, 20);
-
-          image(r, 0, 0);
-
-          //cheating masking
-          var m = createGraphics(width, height, P2D);
-          m.background(0, 0);
-          m.noStroke();
-          m.fill(85, 84, 87);
-          m.beginShape();
-          m.curveVertex(94, 315);
-          m.curveVertex(85, 173);
-          m.curveVertex(193, 105);
-          m.curveVertex(267, 48);
-          m.curveVertex(336, 74);
-          m.curveVertex(395, 152);
-          m.curveVertex(505, 164);
-          m.curveVertex(505, -48);
-          m.curveVertex(-10, -48);
-          m.curveVertex(-10, 629);
-          m.curveVertex(422, 650);
-          m.curveVertex(422, 345);
-          m.curveVertex(396, 430);
-          m.curveVertex(331, 483);
-          m.curveVertex(266, 497);
-          m.curveVertex(174, 457);
-          m.curveVertex(103, 439);
-          m.curveVertex(84, 371);
-          m.curveVertex(92, 300);
-          m.curveVertex(85, 173);
-          m.curveVertex(385, -172);
-          m.endShape();
-          m.filter(BLUR, 2);
-          image(m, 0, 0);
-
-          //hand
-          fill(74, 60, 56);
-          hand(0, 0, 1);
-
-          //sugar
-          textFont(createFont("monospace"), 15);
-          fill(255, 150);
-          text("sugar", 340, 580);
-
-          //texture
-          for (var i = 0; i < 50000; i++) {
-            strokeWeight(random(0.1, 1.5));
-            stroke(242, random(2, 20));
-            point(random(width), random(height));
-          }
-
-          for (var i = 0; i < 50000; i++) {
-            strokeWeight(random(0.1, 1.5));
-            stroke(20, random(2, 20));
-            point(random(width), random(height));
-          }
-
-          var all = get();
-
-          image(all, 0, 0);
-
-          keyPressed = function () {
-            if (keyCode === UP) {
-              scale(0.7, 1);
-              translate(90, 0);
-              background(255);
-              image(all, 0, 0);
-            } else {
-              scale(1, 1);
-              translate(0, 0);
-              image(all, 0, 0);
+    <!--FROM: https://www.khanacademy.org/computer-programming/new-program/6515664766812160 (YokieBob)-->
+    <script type='application/javascript'>
+    function program() {
+        size(400,400);
+        //Idea, outlines from https://www.khanacademy.org/computer-programming/infinite-cobble/6659445549383680 as well as some noise correction for wrapping.
+var points = [];
+for(var i = 0; i < 10; i++){
+    points.push([random(200),random(200),random(128,255)|0,random(128,255)|0,random(128,255)|0]);
+}
+function distsq(a,b,c,d){
+    return (a-c)*(a-c)+(b-d)*(b-d);
+}
+(function(){return this;})().LoopProtector.prototype.leave = function(){};
+draw = function() {
+    this.loadPixels();
+    var pix = this.imageData.data;
+    for(var i = 0; i < 200; i++){
+        for(var k = 0; k < 200; k++){
+            var index = (i+k*400)<<2;
+            var closest = 10000000;
+            var second  = 10000000;
+            var closeInd = 0;
+            var sx;
+            var sy;
+            for(var l = -1; l <= 1; l++){
+                for(var n = -1; n <= 1; n++){
+                    for(var m = 0; m < points.length; m++){
+                        var d = distsq(i,k,points[m][0]+l*200,points[m][1]+n*200);
+                        if(d<closest){
+                            second = closest;
+                            closest = d;
+                            closeInd = m;
+                            sx = l;
+                            sy = n;
+                        }
+                    }
+                }
             }
-          };
-        } else if (iterator === 1) {
-          size(600, 600);
+            var n = (Math.sqrt(closest)-Math.sqrt(second))*0.05;
+            n = -n * noise((i/400-sx*0.5)*10,(k/400-sy*0.5)*10);
+            n=n*n*(3-2*n);
+            pix[index] = points[closeInd][2]*n;
+            pix[index+1] = points[closeInd][3]*n;
+            pix[index+2] = points[closeInd][4]*n;
+        }
+    }
+    this.updatePixels();
+    var g = get(0,0,200,200);
+    image(g,200,0,200,200);
+    image(g,200,200,200,200);
+    image(g,0,200,200,200);
+    draw = function() {};
+};
+
+    }
+        runPJS(program);
+    </script>
+    <script type='application/javascript'>
+    //FROM: https://www.khanacademy.org/computer-programming/button-ui/5569898573381632 (Trenton)
+    function program() {
+        size(400,400);
+        //vars for depth button
+var a = 0;
+var c1 = 200;
+
+//vars for slide button
+var b = 0;
+var c2 = 200;
+
+//vars for switch
+var c = 0;
+var c3 = 200;
+var btn = false;
+
+//vars for rotate
+var d = 0;
+var c4 = 200;
+
+function normalBtn(x, y, w, h) {
+    noStroke();
+    
+    //Shadow
+    fill(0,50);
+    rect(95 + x - a, 35 + y + a, 115 + w, 50 + h, 8);
+    
+    //Button
+    fill(c1);
+    rect(100 + x, 30 + y, 115 + w, 50 + h, 8);
+    
+    if (
+        mouseX > 100 + x &&
+        mouseX < 215 + x + w &&
+        mouseY > 30 + y &&
+        mouseY < 80 + y + h
+    ) 
+    {
+        a += cos(a + 95)*4;
+        
+        if (mouseIsPressed) {
+            c1 = 150;
+            
+        }else {
+            c1 = 200;
+            
+        }
+    }
+    else if (a < 0) {
+        a += sin(a + 20);
+        
+    }
+}
+function revealBtn(x, y, w, h, l) {
+    noStroke();
+    
+    //button
+    fill(c2);
+    rect(225 + x, 70 + y, 50 + w + b, 50 + h, 8);
+    
+    if (
+        mouseX > 225 + x &&
+        mouseX < 275 + x + w + b&&
+        mouseY > 70 + y &&
+        mouseY < 120 + y + h
+    ) 
+    {
+        //l is houw long the button extends
+        b += cos(b + l)*5;
+        
+        if (mouseIsPressed) {
+            c2 = 100;
+            
+        }else {
+            c2 = 200;
+            
+        }
+    }
+    else if (b > 0) {
+        b += sin(-b)*5;
+        
+    }
+}
+function switchBtn(x, y, w, h) {
+    noStroke();
+    
+    //thing it slides on
+    fill(0, 50);
+    rect(50 + x, 190 + y, 81 + w, 35 + h, 8);
+    
+    //thing that turns yellow
+    fill(240, 240, 127);
+    rect(50 + x, 190 + y, 35 + w + c, 35 + h, 8);
+    
+    //button
+    fill(c3);
+    rect(50 + x + c, 190 + y, 35 + w, 35 + h, 8);
+    
+    if (btn === true){
+        c += cos(c + 45)*5;
+        
+    } 
+    else if (btn === false) {
+        c -= sin(c)*5;
+        
+    }
+    
+    mouseClicked = function(){
+        if (
+            mouseX > 50 + x + c &&
+            mouseX < 85 + x + w + c &&
+            mouseY > 190 + y &&
+            mouseY < 225 + y + h
+        ) 
+        {
+            btn = !btn;
+        }
+    };
+}
+function fillBtn(x, y, w, h) {
+    noFill();
+    
+    stroke(200);
+    strokeWeight(2);
+    arc(275 + x, 240 + y, 70 + w, 70 + h, 0, 360);
+    
+    strokeWeight(8);
+    arc(275 + x, 240 + y, 70 + w, 70 + h, 0, 0 + d);
+    
+    if (
+        mouseX > 240 + x &&
+        mouseX < 310 + x + w &&
+        mouseY < 275 + y &&
+        mouseY > 205 + y + h
+    ) 
+    {
+        d += cos(d + 180)*10;
+    }
+    
+}
+
+draw = function() {
+    background(7, 90, 138);
+    
+    //normal button
+    normalBtn(-50, 40, 0, 0);
+    {fill(200);
+    textSize(20);
+    text('Depth',77,45);}
+    
+    //reveal button
+    //**greater the last number the shorter it extends**
+    revealBtn(0, 0, 0, 0, 20);
+    {fill(200);
+    textSize(20);
+    text('Slide',260,45);}
+    
+    //switch button
+    switchBtn(15, 25, 0, 0);
+    {fill(200);
+    textSize(20);
+    text('Switch',77,185);}
+    
+};
+
+    }
+        runPJS(program);
+    </script>
+    <script type='application/javascript'>
+    //FROM:https://www.khanacademy.org/computer-programming/pong/5369635572989952 (Trenton)
+    function program() {
+        size(600,600);
+        /**
+____________________ABOUT_____________________ 
+
+ * TCO entry for challange 3
+ * All vanilla code 
+ * Made mosty in school (no 
+   it didn't affect my grades)
+ * Most efficient code I've made so far
+
+____________________TO-DO_____________________
+
+- Change theme
+- make game actually possible to win
+
+*/
+
+
+//CODE________________________________________
+
+//GAME VARS
+var p1Pos = 210;
+var p2Pos = 210;
+var up = false;
+var down = false;
+var keys = [];
+var PosY = 250;
+var PosX = 300;
+var bSpd = 3;
+var start = false;
+var a = ceil(random(1, 3));
+var p1s = 0;
+var p2s = 0;
+var p1hit = false;
+var p2hit = false;
+
+//BUTTON VARS\\
+var wdth = 0;
+var wdthR = 0;
+var xPos = 0;
+var slide = false;
+
+//SCENE VARS\\
+var home = true;
+var settings = false;
+var about = false;
+var play = false;
+
+//BUTTONS\\
+var SLIDER = function (c, txt, y, h) {
+	return {
+		c: c,
+		txt: txt,
+		pos: [width - 10, width - 80],
+		trg: 0,
+		x: width,
+		y: y,
+		h: h,
+	};
+};
+var btns = [
+	SLIDER(color(227, 4, 49), 'Red', 90, 60),
+	SLIDER(color(255, 255, 255), 'White', 210, 60),
+	SLIDER(color(31, 121, 255), 'Blue', 150, 60),
+	SLIDER(color(0, 0, 0), 'Black', 270, 60),
+];
+function drawBtn(b) {
+	b.trg = mouseY > b.y && mouseY < b.y + b.h && mouseX > b.x ? 1 : 0;
+	b.x += (b.pos[b.trg] - b.x - 15) / 5;
+	fill(b.c);
+	rect(b.x, b.y, 150, b.h, 10);
+	if (b.trg > 0) {
+		fill(65);
+		textFont(createFont('Arial black Italics'));
+		textSize(20);
+		text(b.txt, b.x + 22, b.y + 26);
+	}
+}
+
+//SCENES\\
+function homeScrn() {
+    background(75, 84, 128);
+
+	//big pong text and font
+	
+	{pushMatrix();
+	translate(5,-10);
+	textFont(createFont('arial black'));
+	textSize(90);
+	fill(87, 153, 148);
+	text('PONG', 150, 234);
+	}
+
+	//Button UI
+	{
+		//start button
+		{
+			//button
+			stroke(87, 153, 148);
+			strokeWeight(5);
+			fill(75, 84, 128);
+			rect(195, 275, 200, 60, 8);
+			//start text
+			textFont(createFont);
+			fill(135);
+			textSize(50);
+			text('Start', 240, 322.4);
+
+			//changes color when mouse is dragged over the button
+			if (mouseX >= 193 && mouseX <= 398 && mouseY >= 274 && mouseY <= 338) {
+				//button
+				stroke(87, 153, 148);
+				strokeWeight(5);
+				fill(87, 153, 148);
+				rect(195, 275, 200, 60, 8);
+				//start text
+				textFont(createFont);
+				fill(75, 84, 128);
+				textSize(50);
+				text('Start', 240, 322.4);
+			} else {
+			}
+		}
+        
+		//bottom buttons
+		{
+			//right button\\
+			{
+				stroke(87, 153, 148);
+				strokeWeight(5);
+				fill(75, 84, 128);
+				rect(350, 354, 45 + wdth, 45, 8);
+				noStroke();
+				//text
+				fill(135);
+				textSize(30);
+				text('?  About', 365, 387);
+				//thing to cover up txt
+				fill(75, 84, 128);
+				rect(398 + wdth, 354, 79, 45);
+			}
+			//left button\\
+			{
+				stroke(87, 153, 148);
+				strokeWeight(5);
+				fill(75, 84, 128);
+				rect(195 - wdthR, 354, 45 + wdthR, 45, 8);
+				//text
+				fill(135);
+				textSize(30);
+				text('⚙', 204.2, 388);
+				fill(135);
+				text('Settings', 84, 387);
+				//rect to cover up txt
+				fill(75, 84, 128);
+				noStroke();
+				rect(70 - wdthR, 364, 123, 30);
+			}
+			//if statements for button UI
+			{
+				//makes slide out options for right buttons
+				if (mouseX >= 350 && mouseX <= 395 + wdth && mouseY >= 354 && mouseY <= 400) {
+					wdth += cos(wdth) * 5;
+					stroke(87, 153, 148);
+					strokeWeight(5);
+					fill(87, 153, 148);
+					rect(350, 354, 45 + wdth, 45, 8);
+					noStroke();
+					//text
+					fill(75, 84, 128);
+					textSize(30);
+					text('?  About', 365, 387);
+					//thing to cover up txt
+					fill(75, 84, 128);
+					rect(398 + wdth, 354, 79, 45);
+				} else if (wdth > 1) {
+					wdth -= sin(wdth) * 5;
+				}
+
+				//makes slide out options for left buttons
+				if (mouseX >= 195 - wdthR && mouseX <= 240 + wdth && mouseY >= 354 && mouseY <= 400) {
+					wdthR += cos(wdthR - 30) * 5;
+					stroke(87, 153, 148);
+					strokeWeight(5);
+					fill(87, 153, 148);
+					rect(195 - wdthR, 354, 45 + wdthR, 45, 8);
+					//text
+					fill(75, 84, 128);
+					textSize(30);
+					text('⚙', 204.2, 388);
+					fill(75, 84, 128);
+					text('Settings', 84, 387);
+					//rect to cover up txt
+					fill(75, 84, 128);
+					noStroke();
+					rect(70 - wdthR, 364, 123, 30);
+				} else if (wdthR > 1) {
+					wdthR -= sin(wdthR) * 5;
+				}
+			}
+		}
+	}
+	popMatrix();
+}
+function options() {
+	background(75, 84, 128);
+	//content
+	{noStroke();
+	textFont(createFont(''));
+	textSize(30);
+	fill(135);
+	text('Theme', 218, 130);
+	textSize(15);
+	text('Sorry "Theme" is not an avalible function \n     *Will be added in a later update*',180,462);
+	//button behind slider
+	fill(190);
+	rect(335, 114.2, 35, 15, 300);
+	//slider
+	fill(113, 194, 169, 255);
+	ellipse(343 + xPos, 121.5, 20, 20);
+	//home button
+	noFill();
+	stroke(113, 194, 169, 255);
+	rect(30, 30, 75, 40, 8);
+	fill(135);
+	textSize(50);
+	text('←', 43, 63);
+
+	//makes back button light up
+	if (settings === true && mouseX > 30 && mouseX < 105 && mouseY > 30 && mouseY < 75) {
+		//home button
+		stroke(113, 194, 169, 255);
+		fill(113, 194, 169, 255);
+		rect(30, 30, 75, 40, 8);
+		fill(135);
+		textSize(50);
+		text('←', 43, 63);
+	}
+
+	//mini slider for theme
+	if (slide === true) {
+		noStroke();
+		xPos += cos(xPos + 70) * 6;
+		pushMatrix();
+		btns.forEach(drawBtn);
+		popMatrix();
+		fill(218, 222, 113);
+		rect(335, 114.2, 35, 15, 300);
+		fill(113, 194, 169, 255);
+		ellipse(343 + xPos, 121.5, 20, 20);
+	}
+	//makes mini slider move back
+	if (slide === false && xPos > 1) {
+		xPos -= sin(xPos + 70) * 1.5;
+	}}
+	
+}
+function how() {
+	background(75, 84, 128);
+	//content
+	{textFont(createFont(''));
+	textSize(60);
+	fill(135);
+	text('ABOUT',208,95);
+	textSize(20);
+	text('CONTROLS\n          Arrow keys & W/S for up and down\n\n          Space button to begin game\n\nNAVIGATION\n         As of now there is no setting for difficulty\n\n         There will be plenty of new settings and \n         user friendly UI additions so stay tuned ',112,154);}
+	//home button
+	{noFill();
+	stroke(113, 194, 169, 255);
+	rect(30, 30, 75, 40, 8);
+	fill(135);
+	textSize(50);
+	text('←', 43, 63);
+
+	//makes back button light up
+	if (about === true && mouseX > 30 && mouseX < 105 && mouseY > 30 && mouseY < 75) {
+		//home button
+		stroke(113, 194, 169, 255);
+		fill(113, 194, 169, 255);
+		rect(30, 30, 75, 40, 8);
+		fill(135);
+		textSize(50);
+		text('←', 43, 63);
+	}}
+
+}
+function game(){
+	background(75, 84, 128);
+	
+    //chosing difficulty
+    
+    
+    //paddles
+    fill(255);
+    rect(20,p1Pos,10,80,8);
+    rect(580,p2Pos,10,80,8);
+    
+    //ball
+    ellipse(PosX,PosY,20,20);
+    if(keys[32]){
+        start = true;
+        
+    }
+    if(start === true){
+        //scoreboard
+        fill(255);
+        textFont(createFont('arial black'),30);
+        text(p1s,200,40);
+        text(p2s,400,40);
+        
+        //makes balls bounce off walls
+        if(PosY > 485){
+            bSpd -= 3;
+        }
+        if(PosY < 15){
+            bSpd += 3;
+        }
+        PosY = PosY + bSpd;
+        
+        //makes paddle move up and down
+        if(keys[87]|| keys[UP]){
+            if(p1Pos > 3){
+                p1Pos -= 3;
+            }
+        }
+        if(keys[83] || keys[DOWN]){
+            if(p1Pos < 417){
+                p1Pos += 3;
+            }
+        }
+        //p2 movement
+        if(p2Pos < 3){
+            p2Pos -= 3;
+        }
+        if(p2Pos > 417){
+            p2Pos += 3;
+        }
+        //score 
+        if(PosX > 610){
+            PosX = 300;
+            PosY = 250;
+            a = -a;
+            p1s++;
+            p1hit = false;
+            p2hit = false;
+        }
+        if(PosX < -10){
+            PosX = 300;
+            PosY = 250;
+            a = a;
+            p2s++;
+            p1hit = false;
+            p2hit = false;
+        }
+        //calls p2 hit is true when ball comes in contact with paddle
+        if(PosX >= 575 && PosX <= 590 && PosY > p2Pos && PosY < p2Pos+80){
+            p1hit = false;
+            p2hit = true;
+        }
+        if(PosX >= 20 && PosX <= 35 && PosY > p1Pos && PosY < p1Pos+80){
+            p1hit = true;
+            p2hit = false;
+        }
+        //when p2 hit is true the ball goes the opposite way
+        if(p2hit === true){
+            PosX = PosX - a;
+        }
+        if(p1hit === true){
+            PosX = PosX + a;
+        }
+        else if (p2hit === false || p1hit=== true){PosX = PosX + a;}
+        
+        //println(p2hit);
+        //println(p1hit);
+        //makes paddle not go through screen
+        //idkw but this has to be under the collision stuff
+        if(PosY > 40 && PosY < 460){
+            p2Pos = PosY - 40;
+            
+        }
+        
+        
+    }else {
+        fill(121, 137, 145);
+        textSize(15);
+        text('Press Space to start',233,482);
+        
+    }
+    
+    
+}
+
+//GAME ANIMATION\\
+draw = function () {
+	if (home === true) {
+		homeScrn();
+	} else if (settings === true) {
+		options();
+	} else if (about === true) {
+		how();
+	} else if (play === true) {
+	    game();
+	}
+	
+};
+mousePressed = function () {
+    //main buttons 
+    {
+    //about button
+	if (mouseX >= 350 && mouseX <= 395 + wdth && mouseY >= 354 && mouseY <= 400 && home === true) {
+		about = true;
+		home = false;
+		settings = false;
+		play = false;
+	}
+	//settings button
+	if (mouseX >= 195 - wdthR && mouseX <= 240 + wdth && mouseY >= 354 && mouseY <= 400 && home === true) {
+		settings = true;
+		home = false;
+		about = false;
+		play = false;
+	}
+	if(mouseX >= 192 && mouseX <= 395 && mouseY >= 275 && mouseY <= 335 && home === true){
+	    play = true;
+	    settings = false;
+		home = false;
+		about = false;
+	}
+	
+    }
+	//slider in options
+	{
+	if (mouseX > 335 && mouseX < 355 && mouseY > 112 && mouseY < 132) {
+		slide = true;
+	}
+	if (mouseX > 355 && mouseX < 395 && mouseY > 112 && mouseY < 132) {
+		slide = false;
+	}}
+	//back buttons
+	{
+	if (settings === true && mouseX > 30 && mouseX < 105 && mouseY > 30 && mouseY < 75) {
+		home = true;
+	}
+	if (about === true && mouseX > 30 && mouseX < 105 && mouseY > 30 && mouseY < 75) {
+		home = true;
+	}}
+	//game buttons
+	{
+	 
+	    
+	}
+
+};
+keyPressed = function () {
+    keys[keyCode] = true;
+    
+};
+keyReleased = function () {
+    keys[keyCode] = false;
+
+};
+
+    }
+        runPJS(program);
+    </script>
+    <script type='application/javascript'>
+    function program() {
+        //FROM: https://www.khanacademy.org/computer-programming/border-vs-bamster/5455587238658048 (The Behemoth)
+        size(600,600);
+        draw = function() {
+    background(0, 100, 255);
+    //draws the city background
+    resetMatrix();
+    {
+        fill(110);
+        noStroke();
+        rect(0,400,600,200);
+        fill(150,150,150);
+        rect(210,-90,400,500);
+        fill(0,0,0);
+        rect(0,420,600,50);
+        quad(165,400,138,450,180,450,200,400);
+        beginShape();
+        vertex(180,450);
+        vertex(380,450);
+        vertex(380,600);
+        vertex(180,600);
+        endShape();
+        fill(200,200,200);
+        rect(0,-50,160,580);
+        stroke(0,0,0);
+        line(159,0,159,530);
+        noStroke();
+        quad(160,530,170,490,170,0,160,0);
+        for(var i = 0; i < 10; i++){
+            for(var y = 0; y < 6; y++){
+                fill(50,50,50);
+                rect(220+i*60,-20+y*70,30,50);          
+                
+            }
+        }
+        for(var i = 0; i < 3; i++){
+         for(var y = 0; y < 5; y++){
+          fill(50,50,50);
+          rect(-33+i*65,60+y*90,40,70);
+         }
+        }
+    }
+    //draws the agent
+    {
+    pushMatrix();
+    scale(0.5);
+    translate(0,0);
+    translate(-60,650);
+    noFill();
+    translate(0,-100);
+    fill(255, 255, 255);
+    pushMatrix();
+    translate(-30,0);
+    stroke(0,0,0);
+    pushMatrix();
+    translate(360,433);
+    rotate(-10);
+    fill(0,1255,255,25);
+    noStroke();
+    for(var i = 0; i < 40; i ++){
+     arc(0,0,10+i*3,10+i*10,-90,90);   
+    }
+    fill(0,0,0);
+    rect(0,0,9,35);
+    popMatrix();
+    stroke(0,0,0);
+    fill(250,250,250);
+    //arm
+    pushMatrix();
+    scale(1.2);
+    rotate(15);
+    translate(40,-130);
+    beginShape();
+    vertex(255,410);
+    vertex(200,392);
+    vertex(195,351);
+    vertex(197,341);
+    vertex(200,337);
+    vertex(205,338);
+    vertex(210,340);
+    vertex(209,345);
+    vertex(204,345);
+    vertex(204,344);
+    vertex(209,343);
+    vertex(212,343);
+    vertex(212,347);
+    vertex(208,350);
+    vertex(218,380);
+    vertex(265,385);
+    endShape();
+    popMatrix();
+    noStroke();
+    pushMatrix();
+    translate(215,323);
+    for(var i = 0; i < 100; i ++){
+        rotate(40);
+        fill(255,255,20,10);
+        arc(0,0,10+i*3,10+i*10,-90,90); 
+    }
+    popMatrix();
+    stroke(0,0,0);
+    fill(200,200,200);
+    //leg
+    beginShape();
+    vertex(240,511);
+    vertex(180,560);
+    vertex(120,580);
+    vertex(120,579);
+    vertex(110,583);
+    vertex(112,600);
+    vertex(115,610);
+    vertex(118,615);
+    vertex(122,617);
+    vertex(145,620);
+    vertex(148,617);
+    vertex(145,610);
+    vertex(135,605);
+    vertex(133,600);
+    vertex(133,598);
+    vertex(190,585);
+    vertex(260,555);
+    endShape();
+    popMatrix();
+    //body
+    fill(250, 198, 65);
+    {
+    beginShape();
+    //chin
+    vertex(280,407);
+    vertex(290,407);
+    vertex(297,405);
+    vertex(300,400);
+    //mouth
+    vertex(302,390);
+    vertex(298,390);
+    vertex(303,387);
+    vertex(300,381);
+    vertex(304,380);
+    vertex(307,377);
+    //nose
+    bezierVertex(308,370,308,370,302,365);
+    vertex(300,355);
+    vertex(301,345);
+    //hair
+    vertex(304,347);
+    vertex(301,338);
+    vertex(293,333);
+    vertex(286,330);
+    vertex(276,330);
+    vertex(260,335);
+    //back of head
+    vertex(255,340);
+    vertex(252,345);
+    vertex(249,355);
+    vertex(245,368);
+    vertex(245,390);
+    endShape();
+    
+    }
+    fill(0,0,0);
+    beginShape();
+    vertex(304,347);
+    vertex(301,338);
+    vertex(293,333);
+    vertex(286,330);
+    vertex(276,330);
+    vertex(260,335);
+    //back of head
+    vertex(255,340);
+    vertex(252,345);
+    vertex(249,355);
+    vertex(245,368);
+    vertex(247,380);
+    vertex(265,370);
+    vertex(265,365);
+    endShape();
+    fill(200,200,200);
+    {
+    beginShape();
+    vertex(245,368);
+    //collar
+    bezierVertex(240,385,270,405,290,412);
+    vertex(288,416);
+    vertex(284,420);
+    vertex(280,430);
+    vertex(275,450);
+    vertex(272,480);
+    vertex(270,490);
+    vertex(265,500);
+    vertex(255,520);
+    vertex(325,560);
+    vertex(351,613);
+    vertex(360,615);
+    vertex(373,622);
+    vertex(379,630);
+    vertex(320,630);
+    vertex(319,615);
+    vertex(300,580);
+    vertex(235,560);
+    vertex(210,550);
+    vertex(198,540);
+    vertex(193,530);
+    vertex(191,520);
+    vertex(191,510);
+    vertex(192,500);
+    vertex(193,490);
+    vertex(195,480);
+    vertex(245,365);
+    endShape();
+    }
+    //arm
+    fill(250,250,250);
+    {
+    beginShape();
+    vertex(250,410);
+    vertex(255,410);
+    vertex(260,413);
+    vertex(265,418);
+    vertex(270,428);
+    vertex(280,458);
+    vertex(330,443);
+    vertex(332,440);
+    vertex(334,438);
+    vertex(340,436);
+    vertex(342,440);
+    vertex(343,443);
+    vertex(344,445);
+    vertex(344,448);
+    vertex(344,450);
+    vertex(344,456);
+    vertex(342,463);
+    vertex(332,462);
+    vertex(306,469);
+    vertex(267,485);
+    vertex(247,455);
+    vertex(242,445);
+    vertex(240,440);
+    vertex(239,433);
+    vertex(240,422);
+    vertex(245,412);
+    vertex(250,410);
+    endShape();
+    }
+    
+    pushMatrix();
+    translate(518,590);
+    rotate(-20);
+    translate(-500,-450);
+    fill(0,0,0);
+    rect(300,200,15,10);
+    triangle(300.5,211,314.5,211,307.5,220);
+    popMatrix();
+    fill(250, 198, 65);
+    //ear
+    beginShape();
+    vertex(275,360);
+    bezierVertex(265,350,265,385,275,373);
+    endShape();
+    fill(255,255,255);
+    //eye
+    pushMatrix();
+    translate(3,5);
+    line(286,358,293,353);
+    line(286,358,293,362);
+    arc(286,358,12,12,-20,20);
+    ellipse(291,358-0.4,1,1);
+    popMatrix();
+    popMatrix();
+    }
+    //draws the neighbor
+    {
+    resetMatrix();
+    translate(40,-150);
+    pushMatrix();
+    scale(1.5,2.3);
+    stroke(0,0,0);
+    fill(155,155,0);
+    ellipse(230,190,50,30);
+    fill(0,0,0);
+    ellipse(212,195,10,8);
+    fill(255,255,255);
+    {
+    beginShape();
+    vertex(210,210);
+    vertex(240,190);
+    vertex(200,180);
+    vertex(220,150);
+    vertex(250,140);
+    vertex(270,125);
+    vertex(260,140);
+    vertex(280,130);
+    vertex(269,145);
+    vertex(289,165);
+    vertex(300,175);
+    vertex(300,175);
+    vertex(300,190);
+    vertex(350,230);
+    vertex(375,260);
+    vertex(385,280);
+    vertex(488,330);
+    vertex(378,310);
+    vertex(358,300);
+    vertex(308,310);
+    vertex(248,300);
+    vertex(238,280);
+    vertex(238,230);
+    vertex(248,220);
+    vertex(228,215);
+    vertex(210,210);
+    endShape();
+    noStroke();
+    pushMatrix();
+    translate(259,131);
+    rotate(330);
+    fill(255,0,0);
+    ellipse(10,0,10,6);
+    ellipse(20,10,10,6);
+    fill(255);
+    stroke(0,0,0);
+    popMatrix();
+    }
+    //spike on back
+    {
+    pushMatrix();
+    translate(-40,-70);
+    for(var i =8; i >0; i--){
+     beginShape();
+     vertex(300+i*12,200+i*15);
+     vertex(340+i*12,230+i*15);
+     vertex(300+i*12,220+i*15);
+     endShape();
+    }
+    popMatrix();
+    }
+    //leg
+    {
+    beginShape();
+    vertex(300,260);
+    vertex(310,255);
+    vertex(320,255);
+    vertex(330,260);
+    vertex(340,270);
+    vertex(350,280);
+    vertex(330,310);
+    vertex(340,314);
+    vertex(300,314);
+    vertex(299,313);
+    vertex(292,314);
+    vertex(300,310);
+    vertex(305,310);
+    vertex(315,285);
+    vertex(300,260);
+    endShape();
+    pushMatrix();
+    translate(-60,0);
+    beginShape();
+    vertex(300,260);
+    vertex(310,255);
+    vertex(320,255);
+    vertex(330,260);
+    vertex(340,270);
+    vertex(350,280);
+    vertex(330,310);
+    vertex(340,314);
+    vertex(300,314);
+    vertex(299,313);
+    vertex(292,314);
+    vertex(300,310);
+    vertex(305,310);
+    vertex(315,285);
+    vertex(300,260);
+    endShape();
+    popMatrix();
+    }
+    popMatrix();
+    }
+    //draws the plasma, red-hot, about to toast our hero. But then the hero does Super-Kill, and Double-Blast, and Absolute-Pulverizer, and every evil living organism in the world is METAGROBOLIZED! (That means killed.)
+    {
+     noStroke();
+     fill(255,0,0);
+     translate(200,540);
+     rotate(-33);
+     translate(-200,-540);
+     ellipse(200,540,30,30);
+     triangle(200,524,200,556,250,540);
+     for(var i =0; i < 20; i++){
+      fill(255,0,0,20);
+      ellipse(210,540,30+i*7,30+i*6);   
+     }
+    }
+};
+
+    }
+        runPJS(program);
+    </script>
+    <script type='application/javascript'>
+    function program() {
+        size(600,600);
+        //from: https://www.khanacademy.org/computer-programming/platformerv1/5828236135546880 (OP_Hero)
+        /***
+ * thanls to Liam K. for the tutorial
+ * 
+ * 
+ * 
+ * 
+ * 
+ ***/
+var colors = {
+    blocks: color(0, 0, 0),
+    spikes: color(128, 128, 128),
+    lava: color(255, 0, 0),
+    player: color(0, 0, 255),
+    playerEyes: color(0, 0, 0),
+    portal: color(196, 0, 255),
+    bounce: color(0, 255, 0),
+    bounce2: color(0, 0, 255),
+    bounceTroll: color(0, 191, 0)
+};
+
+var keys = {};
+
+var rectRect = function(x1,y1,w1,h1,x2,y2,w2,h2){
+    return(x1 + w1 > x2 && y1 + h1 > y2 && x1 < x2 + w2 && y1 < y2 + h2);    
+};
+
+var blocks = []; //Array to store blocks.
+var Block = function(x,y,type){
+    this.x = x;
+    this.y = y;
+    this.w = 20;
+    this.h = 20;
+    
+    this.type = type;
+};
+
+Block.prototype.checkColl = function(obj){
+    return(rectRect(this.x,this.y,this.w,this.h,obj.x,obj.y,obj.w,obj.h));
+};
+
+Block.prototype.display = function() {
+    switch(this.type){
+        case 'block':
+            fill(colors.blocks);
+            rect(this.x,this.y,this.w,this.h);
+        break;
+        case 'portal':
+            fill(colors.portal);
+            ellipse(this.x+10,this.y+10,20,20);
+        break;
+        case 'lava':
+            fill(colors.lava);
+            rect(this.x,this.y,this.w,this.h);
+        break;
+        case 'uSpike':
+            fill(colors.spikes);
+            triangle(this.x,this.y+20,this.x+20, this.y+20,this.x+10,this.y);
+        break;
+        case 'lSpike':
+            fill(colors.spikes);
+            triangle(this.x,this.y+10,this.x+20, this.y+20,this.x+20,this.y);
+        break;
+        case 'dSpike':
+            fill(colors.spikes);
+            triangle(this.x,this.y,this.x+20, this.y,this.x+10,this.y+20);
+        break;
+        case 'rSpike':
+            fill(colors.spikes);
+            triangle(this.x,this.y+20,this.x+20, this.y+10,this.x,this.y);
+        break;
+        case 'bounce':
+            fill(colors.bounce);
+            ellipse(this.x+10,this.y+20, this.w, this.h-10);
+        break;
+        case 'bounceTroll':
+            fill(colors.bounceTroll);
+            ellipse(this.x+10,this.y+20, this.w, this.h-10);
+        break;
+        case 'bounce2':
+            fill(colors.bounce2);
+            ellipse(this.x+10,this.y+20, this.w, this.h-10);
+        break;
+        case 'onlyUp':
+            fill(colors.spikes);
+            rect(this.x,this.y,this.w,4);
+        break;
+        case 'onlyDown':
+            fill(colors.spikes);
+            rect(this.x,this.y+16,this.w,4);
+        break;
+    }
+};
+  
+
+var Player = function(x,y){
+    this.x = x;
+    this.y = y;
+    this.w = 20;
+    this.h = 20;
+    
+    this.px = 0;
+    this.py = 0;
+    
+    this.xv = 0;
+    this.yv = 0;
+    this.grav = 0.32;
+    
+    this.canJump = false;
+    this.jumpPower = 7;
+};
+
+Player.prototype.draw = function() {
+    fill(0,0,255);
+    noStroke();
+    rect(this.x,this.y,this.w,this.h);
+    fill(0);
+    ellipse(this.x+6,this.y+10,4,10);
+    ellipse(this.x+14,this.y+10,4,10);
+};
+
+Player.prototype.move = function(){
+    
+    this.px = this.x;
+    this.py = this.y;
+    
+    this.y += this.yv;
+    this.yv += this.grav;
+    
+    this.x += this.xv;
+    this.xv = 0;
+    if(keys[LEFT]){
+        this.xv = -3;   
+    }
+    if(keys[RIGHT]){
+        this.xv = 3;   
+    }
+    if(keys[UP]&&this.canJump){
+        this.yv = -this.jumpPower;
+        this.canJump = false;
+    }
+};
+
+Player.prototype.collide = function(obj, type){
+    if(obj.checkColl(this)){
+        if(type === 'block') {
+            if(this.py <= obj.y - this.h) {
+                this.y = obj.y - this.h;    
+                this.canJump = true;
+                this.yv=0;
+            }
+            else if(this.px >= obj.x + obj.w) {
+                this.x = obj.x+obj.w;
+                this.xv = 0;
+            }
+            else if(this.px  <= obj.x- this.w) {
+                this.x = obj.x-this.w;
+                this.xv = 0;
+            }
+            else if(this.py >= obj.y + obj.h){
+                this.y = this.py;
+                this.yv = -this.yv;
+            }
+        }
+        else if(type === 'onlyUp') {
+            if(this.py <= obj.y - this.h) {
+                this.y = obj.y - this.h;    
+                this.canJump = true;
+                this.yv=0;
+            }
+            else if(this.px >= obj.x + obj.w) {
+                this.x = obj.x+obj.w;
+                this.xv = 0;
+            }
+            else if(this.px  <= obj.x- this.w) {
+                this.x = obj.x-this.w;
+                this.xv = 0;
+            }
+        }
+        else if(type === 'onlyDown') {
+            if(this.px >= obj.x + obj.w) {
+                this.x = obj.x+obj.w;
+                this.xv = 0;
+            }
+            else if(this.px  <= obj.x- this.w) {
+                this.x = obj.x-this.w;
+                this.xv = 0;
+            }
+            else if(this.py >= obj.y + obj.h){
+                this.y = this.py;
+                this.yv = -this.yv;
+            }
+        }
+    }
+};
+
+var player = new Player(200,200);
+
+var level = 1;
+var levels = [
+    [   'bbbbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b......^...........b',
+        'b.....<l>..........b',
+        'b......v...........b',
+        'b..................b',
+        'b..P...............b',
+        'b......-........@..b',
+        'b......_...........b',
+        'b...........T~.....b',
+        'bbbbbbbbbbbbbbbbbbbb',
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..P...............b',
+        'b...............@..b',
+        'b..................b',
+        'b..................b',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b.............@....b',
+        'b.P..b...b.........b',
+        'b....blllb.........b',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b....^...^....@....b',
+        'b.P..b...b.........b',
+        'b..T.blllb.........b',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b.............b',
+        'b....b........@....b',
+        'b.P..b.............b',
+        'b...~b.............b',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b.....v..b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b.........b',
+        'b........b....@....b',
+        'b.P......b.........b',
+        'b.....~.Tb.........b',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b...............@..b',
+        'b............bbbb..b',
+        'b..................b',
+        'b..................b',
+        'b........^.........b',
+        'b........bbbb......b',
+        'b..................b',
+        'b..................b',
+        'b...............^..b',
+        'b............bbbb..b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b........bbbb......b',
+        'b..................b',
+        'b.P................b',
+        'b..................b',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b.............@....b',
+        'b.P................b',
+        'b.....^^^^.........b',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'b.................@b',
+        'b..................b',
+        'b...............T..b',
+        'b..................b',
+        'bbbbbbbbbbbbbbbbbb_b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'bbbbbbbbbbbbbbbbbb_b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b_bbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'bbbbbbbbbbbbbbbbbb_b',
+        'bP.................b',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'bb...b...b...b...b@b',
+        'bb...b...b...b...b.b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bb_b-b_b-b_b-b_b-b_b',
+        'bP~b..~b..~b..~b..~b',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+    [
+        'bbbbbbbbbbbbbbbbbbbb',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b..................b',
+        'b......=...........b',
+        'b..................b',
+        'b.............@....b',
+        'b.P................b',
+        'b..................b',
+        'bbbbbb........bbbbbb',
+        'bbbbbb????????bbbbbb',
+        
+    ],
+    [
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        '....................',
+        'bbbbbbbbbbbbbbbbbbbb',
+        
+    ],
+];
+var leveltexts = ["Get trolled", "Arrow keys to move", "Lava hurts", "Spikes and Trampolines", "Super Trampolines yay", "Choose whisely", "Little parkour", "Quad spikes???", "what is that?", "Ups and downs", "Last level"];
+
+var drawLevel = function(){
+    player.yv = 0;
+    blocks = [];
+    for(var i = 0; i < levels[level].length;i++){    
+        for(var j = 0; j < levels[level][i].length;j++){
+            switch(levels[level][i][j]){
+                case 'b':
+                    blocks.push(new Block(j*20,i*20,'block'));
+                break;
+                case 'P':
+                    player.x = j*20;
+                    player.y = i*20;
+                break;
+                case '@':
+                    blocks.push(new Block(j*20,i*20,'portal'));
+                break;
+                case 'l':
+                    blocks.push(new Block(j*20,i*20,'lava'));
+                break;
+                case '^':
+                    blocks.push(new Block(j*20,i*20,'uSpike'));
+                break;
+                case '<':
+                    blocks.push(new Block(j*20,i*20,'lSpike'));
+                break;
+                case 'v':
+                    blocks.push(new Block(j*20,i*20,'dSpike'));
+                break;
+                case '>':
+                    blocks.push(new Block(j*20,i*20,'rSpike'));
+                break;
+                case 'T':
+                    blocks.push(new Block(j*20,i*20,'bounce'));
+                break;
+                case '~':
+                    blocks.push(new Block(j*20,i*20,'bounce2'));
+                break;
+                case '=':
+                    blocks.push(new Block(j*20,i*20,'bounceTroll'));
+                break;
+                case '_':
+                    blocks.push(new Block(j*20,i*20,'onlyUp'));
+                break;
+                case '-':
+                    blocks.push(new Block(j*20,i*20,'onlyDown'));
+                break;
+                case '?':
+                    blocks.push(new Block(j*20,i*20,'portalTroll'));
+                    break;
+            }
+        }
+    }
+};
+drawLevel();
+
+draw = function(){
+    if(keys[82]){
+        drawLevel();
+    }
+    background(255,255,255);
+    player.draw();
+    player.move();
+    for(var i = 0; i < blocks.length; i ++){
+        blocks[i].display();
+        if(blocks[i].type === 'block'){
+            player.collide(blocks[i], 'block');
+        }
+        if(blocks[i].type === 'onlyUp'){
+            player.collide(blocks[i], 'onlyUp');
+        }
+        if(blocks[i].type === 'onlyDown'){
+            player.collide(blocks[i], 'onlyDown');
+        }
+        if(blocks[i].checkColl(player)){
+            switch(blocks[i].type){
+                case 'portal':
+                    if(level < levels.length-2){
+                        level ++;
+                        drawLevel();
+                    }
+                    else{
+                        level++;
+                        drawLevel();
+                        background(217, 0, 255);
+                        textAlign(CENTER, CENTER);
+                        fill(107, 201, 255);
+                        textSize(100);
+                        text("YOU\nWON", 200, 200);
+                        textSize(30);
+                        text("comment in T&T\nif you have new ideas", 200, 350);
+                        noLoop();
+                    }
+                break;
+                case 'lava':
+                    drawLevel();
+                break;
+                case 'uSpike':
+                    drawLevel();
+                break;
+                case 'lSpike':
+                    drawLevel();
+                break;
+                case 'dSpike':
+                    drawLevel();
+                break;
+                case 'rSpike':
+                    drawLevel();
+                    break;
+                case 'bounce':
+                    player.yv = -10;
+                    player.canJump = false;
+                    break;
+                case 'bounce2':
+                    player.yv = -14;
+                    player.canJump = false;
+                    break;
+                case 'bounceTroll':
+                    player.yv = 10;
+                    player.canJump = false;
+                    break;
+                case 'portalTroll':
+                    level = 0;
+                    drawLevel();
+                    break;
+            }
+        }
+    }
+    textAlign(CENTER, CENTER);
+    textSize(20);
+    fill(0, 255, 255);
+    text(leveltexts[level], 200, 200);
+};
+
+
+keyPressed = function(){
+    keys[keyCode] = true;
+};
+keyReleased = function(){
+    keys[keyCode] = false;
+};
+
+
+
+    }
+        runPJS(program);
+    </script>
+  
+    <script type="application/javascript">
+      function program() {
+        size(600, 600);
           //big credit to bennimus for his 3D class, which is way undervoted. It is incredible.
           var B3D = function () {
             this.dist = function (x1, y1, z1, x2, y2, z2) {
@@ -2730,13 +5163,214 @@ Prototype 1
             text("TRIGGER", -22, 34);
             resetMatrix();
           };
-        } else if (iterator === 2) {
-        } else if (iterator === 3) {
-        } else if (iterator === 4) {
-        }
-
-      }, 1000);
       }
+      runPJS(program);</script>
+    <script type="application/javascript">
+      function program() {
+        size(400, 600);
+          // All code goes here
+          /*
+        mirror
+    
+        hi, dw im not leaving ka, but im going like 1/10-active.
+        
+        i’ve been having dpdr for a while now and ive only told my closest friends… i just wanna take a little break from the screen to see if it helps lol
+        i’ll still come online to ka for a quick glance at the hl lol often, but i don’t think i’ll be making programs in a while
+        this graphics just shows what it feels like rn, its like watching myself through the mirror - connected but not really. and yeah i have associative synesthesia so like the grayness is what dpdr feels like and the colors in the reflection are reality in color, sort of. dpdr is weird and kind of scary but hopefully this will be over when i actually face it instead of ignoring it
+        i also do feel like i don’t really know myself, partially because of dpdr and partially because i’ve always tried to blend in 
+        i probably need to tell my fam but as a procrastinator ive been putting that off for like years now lol
+        
+        @bugbashers - im sry but i don’t think ill be active for the final project, wishing you guys luck <3
+        
+        this took ~2 hours
+        sorry it's bad lol and possibly laggy
+    
+    */
+
+          //hand
+          function hand(x, y, s) {
+            pushMatrix();
+            scale(s, 1);
+            translate(x, y);
+            beginShape();
+            curveVertex(111, 408);
+            curveVertex(210, 381);
+            curveVertex(246, 346);
+            curveVertex(268, 321);
+            curveVertex(275, 312);
+            curveVertex(268, 308);
+            curveVertex(246, 313);
+            curveVertex(219, 338);
+            curveVertex(203, 338);
+            curveVertex(196, 322);
+            curveVertex(210, 284);
+            curveVertex(224, 261);
+            curveVertex(242, 244);
+            curveVertex(261, 230);
+            curveVertex(262, 219);
+            curveVertex(234, 229);
+            curveVertex(206, 251);
+            curveVertex(188, 275);
+            curveVertex(194, 264);
+            curveVertex(201, 249);
+            curveVertex(219, 226);
+            curveVertex(230, 208);
+            curveVertex(230, 198);
+            curveVertex(224, 195);
+            curveVertex(207, 214);
+            curveVertex(183, 238);
+            curveVertex(171, 269);
+            curveVertex(184, 239);
+            curveVertex(197, 224);
+            curveVertex(203, 211);
+            curveVertex(197, 202);
+            curveVertex(177, 232);
+            curveVertex(169, 248); //
+            curveVertex(165, 254);
+            curveVertex(156, 284);
+            curveVertex(166, 257);
+            curveVertex(169, 241);
+            curveVertex(165, 231);
+            curveVertex(161, 235);
+            curveVertex(146, 272);
+            curveVertex(140, 303);
+            curveVertex(134, 330);
+            curveVertex(125, 359);
+            curveVertex(107, 387);
+            curveVertex(-9, 569);
+            curveVertex(48, 615);
+            curveVertex(123, 476);
+            curveVertex(152, 426);
+            curveVertex(178, 398);
+            curveVertex(198, 386);
+            curveVertex(210, 381);
+            endShape();
+            popMatrix();
+          }
+
+          //bg?
+          background(111, 109, 130);
+          noStroke();
+
+          //reflection
+          fill(54, 42, 42);
+          hand(-669, 0, -0.7);
+
+          //colors
+          var f = createGraphics(width, height, P2D);
+          f.translate(18, 88);
+          f.background(0, 0);
+          f.noStroke();
+          f.fill(106, 166, 66, 150);
+          f.ellipse(117, 184, 250, 350);
+          f.fill(194, 189, 97, 150);
+          f.ellipse(103, 408, 350, 250);
+          f.fill(184, 131, 66, 150);
+          f.ellipse(250, 444, 250, 250);
+          f.fill(184, 94, 66, 150);
+          f.ellipse(462, 334, 250, 350);
+          f.fill(184, 66, 66, 150);
+          f.ellipse(346, 118, 212, 223);
+          f.filter(BLUR, 45);
+          image(f, 0, 0);
+
+          //reflections
+          var r = createGraphics(width, height, P2D);
+          r.translate(9, -30);
+          r.scale(1.2);
+          r.background(0, 0);
+          r.noStroke();
+          r.fill(255, 70);
+          r.beginShape();
+          r.vertex(186, 93);
+          r.vertex(74, 379);
+          r.vertex(99, 458);
+          r.vertex(288, 24);
+          r.vertex(336, 68);
+          r.vertex(177, 473);
+          r.vertex(245, 555);
+          r.vertex(376, 121);
+          r.vertex(364, 6);
+          r.vertex(204, 54);
+          r.vertex(187, 93);
+          r.endShape();
+          r.filter(BLUR, 20);
+
+          image(r, 0, 0);
+
+          //cheating masking
+          var m = createGraphics(width, height, P2D);
+          m.background(0, 0);
+          m.noStroke();
+          m.fill(85, 84, 87);
+          m.beginShape();
+          m.curveVertex(94, 315);
+          m.curveVertex(85, 173);
+          m.curveVertex(193, 105);
+          m.curveVertex(267, 48);
+          m.curveVertex(336, 74);
+          m.curveVertex(395, 152);
+          m.curveVertex(505, 164);
+          m.curveVertex(505, -48);
+          m.curveVertex(-10, -48);
+          m.curveVertex(-10, 629);
+          m.curveVertex(422, 650);
+          m.curveVertex(422, 345);
+          m.curveVertex(396, 430);
+          m.curveVertex(331, 483);
+          m.curveVertex(266, 497);
+          m.curveVertex(174, 457);
+          m.curveVertex(103, 439);
+          m.curveVertex(84, 371);
+          m.curveVertex(92, 300);
+          m.curveVertex(85, 173);
+          m.curveVertex(385, -172);
+          m.endShape();
+          m.filter(BLUR, 2);
+          image(m, 0, 0);
+
+          //hand
+          fill(74, 60, 56);
+          hand(0, 0, 1);
+
+          //sugar
+          textFont(createFont("monospace"), 15);
+          fill(255, 150);
+          text("sugar", 340, 580);
+
+          //texture
+          for (var i = 0; i < 50000; i++) {
+            strokeWeight(random(0.1, 1.5));
+            stroke(242, random(2, 20));
+            point(random(width), random(height));
+          }
+
+          for (var i = 0; i < 50000; i++) {
+            strokeWeight(random(0.1, 1.5));
+            stroke(20, random(2, 20));
+            point(random(width), random(height));
+          }
+
+          var all = get();
+
+          image(all, 0, 0);
+
+          keyPressed = function () {
+            if (keyCode === UP) {
+              scale(0.7, 1);
+              translate(90, 0);
+              background(255);
+              image(all, 0, 0);
+            } else {
+              scale(1, 1);
+              translate(0, 0);
+              image(all, 0, 0);
+            }
+          };
+      }
+     runPJS(program);</script>
+    <script type="application/javascript">
+      var iterator = 0;
 
       function $(selector) {
         if (selector.startsWith("#")) {
@@ -2834,25 +5468,49 @@ Prototype 1
       scene(2);
 
       const app1bookstore = {
-        books: [
+        books: [  
           {
-            title: "Games",
+            title: "World trigger logo",
             id: "YL",
-            chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
-            iterator: 0,
-          },
-          {
-            title: "Graphics",
-            id: "EJ",
             chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/world-trigger-logo/4570740240596992" target="_blank">The Behemoth</a>`],
-           iterator: 1,
+          iterator: 0,
           },
           {
-            title: "Misc.",
-            id: "MM",
-            chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
-           iterator: 2,
+            title: "Mirror",
+            id: "EJ",  chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
+          
+             iterator: 1,
           },
+          {
+            title: "Mirror",
+            id: "EJ",  chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
+          
+             iterator: 2,
+          },
+          {
+            title: "Mirror",
+            id: "EJ",  chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
+          
+             iterator: 3,
+          },
+          {
+            title: "Mirror",
+            id: "EJ",  chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
+          
+             iterator: 4,
+          },
+          {
+            title: "Mirror",
+            id: "EJ",  chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
+          
+             iterator: 5,
+          },
+          {
+            title: "Mirror",
+            id: "EJ",  chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
+          
+             iterator: 6,
+          }
         ],
         removeBook(bookId) {
           this.books = this.books.filter((book) => book.id !== bookId);
@@ -2945,10 +5603,16 @@ Prototype 1
           const titleElement = document.getElementById("app1bookTitle");
           const contentElement = document.getElementById("app1chapterAuthor");
           const chapter = this.currentBook.chapters[this.currentChapterIndex];
+          iterator = this.currentBook.iterator;
+          
+          for (var i = 0; i < document.getElementsByClassName('sketch').length; i++) {
+  document.getElementsByClassName('sketch')[i].style.display = 'none';
+}
 
+document.getElementsByClassName('sketch')[iterator].style.display = 'block';
           titleElement.innerHTML = this.currentBook.title;
           contentElement.innerHTML = chapter;
-          iterator = this.currentBook.iterator;
+        
           if (!this.chaptersRead[this.currentBook.id]) {
             this.chaptersRead[this.currentBook.id] = [];
           }
@@ -2957,8 +5621,6 @@ Prototype 1
           }
 
           this.updateButtons();
-
-          runPJS(program);
         },
         app1nextChapter() {
           if (this.currentChapterIndex < this.currentBook.chapters.length - 1) {
@@ -3039,7 +5701,7 @@ Prototype 1
         document.body.classList.add(selectedTheme);
         localStorage.setItem("theme", selectedTheme);
       });
-
+     
     </script>
 
     <script type="application/javascript"></script>
