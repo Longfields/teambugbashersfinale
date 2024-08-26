@@ -1,0 +1,3117 @@
+<!DOCTYPE html>
+<!--
+Library Admin App V1
+by LeaferStudios@LeaferStudios (https://www.khanacademy.org/profile/kaid_553656479258879622339276/projects)
+
+SUBSCRIBE here for more cool stuff:
+https://www.khanacademy.org/computer-programming/leaferstudios/4934504502870016
+
+Prototype 1
+
+-Finished August 24, 2024
+-Pure ES6 and CSS3
+-Over 1700 lines of code
+-Extremely customizable CSS using root variables
+-12 themes
+-Responsive navbar
+-Current theme gets saved to browser storage
+-Read books with multiple chapters, add/remove books to the cart, delete books from the database, check out books, and view the books and chapters you've read after checkout
+
+-->
+<html lang="en">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="UTF-8" />
+    <meta
+      name="description"
+      content="A library app website built with JavaScript by LeaferStudios"
+    />
+    <meta name="author" content="LeaferStudios" />
+    <meta name="keywords" content="Website" />
+    <!-- Meta tag to ensure the website scales the same across all devices for responsive web design -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Preconnect to the Google Fonts API to improve loading performance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <!-- Preconnect to the Google Fonts API's static assets (like font files) to improve loading performance -->
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&family=Roboto+Serif:ital,wght@0,100..700;1,100..700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Link to Google Material Icons, a library of icons for use in the webpage -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <!-- Link to a CSS file that resets default browser styles, which ensures consistent rendering across different browsers  -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/normalize/6.0.0/normalize.min.css"
+    />
+
+    <title>Library Admin App V1</title>
+    <!-- CSS styles for the app -->
+    <style>
+      /* Defining CSS variables for theming */
+      :root {
+        --logo-lime: linear-gradient(yellow, rgb(163, 163, 0));
+        --logo-green: gold;
+        --logo-black: linear-gradient(black, yellow);
+        --logo-hue: rgba(250, 209, 5, 1);
+
+        --app-background: #fff;
+        --app-primary: red;
+        --app-text-color: #000;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: red;
+        --app-button-text: white;
+        --app-button-background-hover: darkred;
+        --app-button-text-hover: white;
+        --app-button-margin: 0px 10px 10px 0px; /* Custom variable, default would be 0px */
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        /* navbar */
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px; /* nav is sidenav, navbar is navbar */
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+      .default-theme {
+        --app-background: #fff;
+        --app-primary: red;
+        --app-text-color: #000;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: red;
+        --app-button-text: white;
+        --app-button-background-hover: darkred;
+        --app-button-text-hover: white;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .dark-theme {
+        --app-background: #000;
+        --app-primary: #444;
+        --app-text-color: #fff;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #444;
+        --app-button-text: #fff;
+        --app-button-background-hover: #333;
+        --app-button-text-hover: #fff;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.8);
+        --app-modal-content-background-color: #333;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #666;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .green-theme {
+        --app-background: #e8f5e9;
+        --app-primary: #4caf50;
+        --app-text-color: #2e7d32;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #4caf50;
+        --app-button-text: white;
+        --app-button-background-hover: #388e3c;
+        --app-button-text-hover: white;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .blue-theme {
+        --app-background: #e3f2fd;
+        --app-primary: #2196f3;
+        --app-text-color: #1e88e5;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #2196f3;
+        --app-button-text: white;
+        --app-button-background-hover: #1976d2;
+        --app-button-text-hover: white;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .brown-theme {
+        --app-background: #efebe9;
+        --app-primary: #795548;
+        --app-text-color: #5d4037;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #795548;
+        --app-button-text: white;
+        --app-button-background-hover: #6d4c41;
+        --app-button-text-hover: white;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .pink-theme {
+        --app-background: #fce4ec;
+        --app-primary: #e91e63;
+        --app-text-color: #c2185b;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #e91e63;
+        --app-button-text: white;
+        --app-button-background-hover: #d81b60;
+        --app-button-text-hover: white;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .yellow-theme {
+        --app-background: #fffde7;
+        --app-primary: #ffeb3b;
+        --app-text-color: #5e6200;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #ffeb3b;
+        --app-button-text: black;
+        --app-button-background-hover: #fdd835;
+        --app-button-text-hover: black;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: black;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .purple-theme {
+        --app-background: #f3e5f5;
+        --app-primary: #9c27b0;
+        --app-text-color: #7b1fa2;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #9c27b0;
+        --app-button-text: white;
+        --app-button-background-hover: #8e24aa;
+        --app-button-text-hover: white;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .teal-theme {
+        --app-background: #e0f2f1;
+        --app-primary: #009688;
+        --app-text-color: #00796b;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #009688;
+        --app-button-text: white;
+        --app-button-background-hover: #00897b;
+        --app-button-text-hover: white;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .maroon-theme {
+        --app-background: #f3e5e5;
+        --app-primary: #800000;
+        --app-text-color: #4b0000;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #800000;
+        --app-button-text: white;
+        --app-button-background-hover: #720000;
+        --app-button-text-hover: white;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: white;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .orange-theme {
+        --app-background: #fff3e0;
+        --app-primary: #ff9800;
+        --app-text-color: #ef6c00;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #ff9800;
+        --app-button-text: black;
+        --app-button-background-hover: #fb8c00;
+        --app-button-text-hover: black;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: black;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      .cyan-theme {
+        --app-background: #e0f7fa;
+        --app-primary: #00bcd4;
+        --app-text-color: #00838f;
+        --app-font: "IBM Plex Sans", sans-serif;
+        --app-button-font: "Roboto Serif", Arial, Helvetica, sans-serif;
+        --app-button-background: #00bcd4;
+        --app-button-text: black;
+        --app-button-background-hover: #00acc1;
+        --app-button-text-hover: black;
+        --app-button-margin: 0px 10px 10px 0px;
+        --app-modal-background-color: rgba(0, 0, 0, 0.4);
+        --app-modal-content-background-color: #fff;
+        --app-modal-content-margin: 15% auto;
+        --app-modal-content-padding: 20px;
+        --app-modal-content-border: 1px solid #888;
+        --app-modal-content-width: 80%;
+        --app-modal-content-max-width: 500px;
+        --app-button-height: 42px;
+        --app-button-padding: 0 16px;
+        --app-button-border: 2px solid var(--app1buttonColor);
+        --app-button-border-radius: 4px;
+        --app-button-box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-hover: 0px 4px 4px rgba(0, 0, 0, 0.3);
+        --app-button-box-shadow-focus: 0px 4px 4px rgba(0, 0, 0, 0.5);
+        --app-navbar-bg-color: var(--app-primary);
+        --app-navbar-text-color: black;
+        --app-navbar-padding: 10px;
+        --app-logo-font-size: 24px;
+        --app-logo-font-weight: bold;
+        --app-menu-icon-display: none;
+        --app-nav-link-margin: 0 0px;
+        --app-nav-link-text-decoration: none;
+        --app-nav-link-hover-decoration: underline;
+        --app-mobile-nav-bg-color: var(--app-primary);
+        --app-mobile-nav-width: 250px;
+        --app-mobile-nav-padding-left: 20px;
+        --app-mobile-nav-transition: left 0.3s ease-out;
+        --app-mobile-nav-link-margin: 0px 0;
+        --app-navbar-height: 64px;
+        --app-link-color: #1a73e8;
+        --app-link-color-hover: #164ea6;
+      }
+
+      body {
+        background: var(--app-background);
+        color: var(--app-text-color);
+        font-family: var(--app-font);
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+      .navbar {
+        background-color: var(--app-navbar-bg-color);
+        color: var(--app-navbar-text-color);
+        padding: var(--app-navbar-padding);
+        position: relative;
+        top: 0;
+        height: var(--app-navbar-height);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 999;
+      }
+      .navbar.fixed {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 999;
+      }
+
+      .navbar-logo {
+        font-size: var(--app-logo-font-size);
+        font-weight: var(--app-logo-font-weight);
+      }
+
+      .menu-icon {
+        display: var(--app-menu-icon-display);
+        cursor: pointer;
+      }
+
+      .nav-links {
+        list-style: none;
+        display: flex;
+        margin: 0;
+        padding: 0;
+        z-index: 999;
+      }
+
+      .nav-links li {
+        margin: var(--app-nav-link-margin);
+        width: 100%;
+      }
+
+      .nav-links a {
+        width: 100%;
+        display: block;
+        line-height: var(--app-navbar-height);
+        height: var(--app-navbar-height);
+        padding: 0 12px;
+        margin: 0px;
+        font-family: var(--app-font);
+        color: var(--app-navbar-text-color);
+        text-decoration: var(--app-nav-link-text-decoration);
+      }
+
+      .nav-links a:hover {
+        text-decoration: var(--app-nav-link-hover-decoration);
+        color: var(--app-navbar-text-color);
+      }
+
+      @media (max-width: 768px) {
+        .menu-icon {
+          display: block;
+        }
+        .overlay.open {
+          display: block;
+        }
+        .nav-links {
+          position: fixed;
+          top: 0;
+          left: -100%;
+          width: var(--app-mobile-nav-width);
+          height: 100%;
+          background-color: var(--app-mobile-nav-bg-color);
+          display: flex;
+          flex-direction: column;
+          align-items: start;
+          justify-content: center;
+          padding-left: var(--app-mobile-nav-padding-left);
+          /* Cross-browser support for transitions */
+          -webkit-transition: var(--app-mobile-nav-transition);
+          -moz-transition: var(--app-mobile-nav-transition);
+          -o-transition: var(--app-mobile-nav-transition);
+          transition: var(--app-mobile-nav-transition);
+        }
+
+        .nav-links li {
+          margin: var(--app-mobile-nav-link-margin);
+        }
+
+        .nav-links.open {
+          left: 0;
+        }
+      }
+      button {
+        margin: var(--app-button-margin);
+      }
+      #app1modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: var(--app-modal-background-color);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      #app1modalContent {
+        background-color: var(--app-modal-content-background-color);
+        margin: var(--app-modal-content-margin);
+        padding: var(--app-modal-content-padding);
+        border: var(--app-modal-content-border);
+        width: var(--app-modal-content-width);
+        max-width: var(--app-modal-content-max-width);
+        position: relative;
+      }
+      #app1modalContent h3 {
+        margin-bottom: 10px;
+      }
+      #app-1 button {
+        height: var(--app-button-height);
+        padding: var(--app-button-padding);
+        font-family: var(--app-button-font);
+        border: var(--app-button-border);
+        cursor: pointer;
+        border-radius: var(--app-button-border-radius);
+        background-color: var(--app-button-background);
+        transition: all 0.21s ease-out;
+        color: var(--app-button-text);
+        outline: 2px solid transparent;
+        box-shadow: var(--app-button-box-shadow);
+      }
+      #app-1 button:hover {
+        background-color: var(--app-button-background-hover);
+        color: var(--app-button-text-hover);
+        outline: 2px solid transparent;
+        box-shadow: var(--app-button-box-shadow-hover);
+      }
+      #app-1 button:focus {
+        outline: 2px solid #000;
+        box-shadow: var(--app-button-box-shadow-focus);
+      }
+
+      #app-1 i.material-icons {
+        vertical-align: middle;
+      }
+
+      #app-1 .book-card {
+        border: 1px solid #ccc;
+        padding: 10px 20px;
+        margin: 10px;
+        border-radius: 5px;
+      }
+
+      #theme-selector {
+        height: var(--app-button-height);
+        padding: var(--app-button-padding);
+        font-family: var(--app-button-font);
+        border: var(--app-button-border);
+        cursor: pointer;
+        border-radius: var(--app-button-border-radius);
+        background-color: var(--app-button-background);
+        transition: all 0.21s ease-out;
+        color: var(--app-button-text);
+        outline: 2px solid transparent;
+        border-right: 10px solid var(--app-button-background);
+        box-shadow: var(--app-button-box-shadow);
+      }
+      #theme-selector:hover {
+        background-color: var(--app-button-background-hover);
+        color: var(--app-button-text-hover);
+        outline: 2px solid transparent;
+        box-shadow: var(--app-button-box-shadow-hover);
+        border-right: 10px solid var(--app-button-background-hover);
+      }
+      #theme-selector:focus {
+        outline: 2px solid #000;
+        box-shadow: var(--app-button-box-shadow-focus);
+      }
+
+      .overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: none;
+      }
+
+      .text-center {
+        text-align: center;
+      }
+      hr {
+        border: none;
+        height: 1px;
+        background-color: var(--app-text-color);
+      }
+      a {
+        color: var(--app-link-color);
+
+        text-decoration: none;
+      }
+      a:hover {
+        color: var(--app-link-color-hover);
+        text-decoration: underline;
+      }
+    </style>
+    <!-- Margin & padding utilities  -->
+    <style>
+      /* Margin & Padding Utilities */
+      /* Padding Top */
+      .p-t-0 {
+        padding-top: 0;
+        /* Top padding 0 - equals to 0px */
+      }
+
+      .p-t-1 {
+        padding-top: 0.25rem;
+        /* Top padding 1 - equals to 4px */
+      }
+
+      .p-t-2 {
+        padding-top: 0.5rem;
+        /* Top padding 2 - equals to 8px */
+      }
+
+      .p-t-3 {
+        padding-top: 1rem;
+        /* Top padding 3 - equals to 16px */
+      }
+
+      .p-t-4 {
+        padding-top: 1.5rem;
+        /* Top padding 4 - equals to 24px */
+      }
+
+      .p-t-5 {
+        padding-top: 3rem;
+        /* Top padding 5 - equals to 48px */
+      }
+
+      /* Padding Bottom */
+      .p-b-0 {
+        padding-bottom: 0;
+        /* Bottom padding 0 - equals to 0px */
+      }
+
+      .p-b-1 {
+        padding-bottom: 0.25rem;
+        /* Bottom padding 1 - equals to 4px */
+      }
+
+      .p-b-2 {
+        padding-bottom: 0.5rem;
+        /* Bottom padding 2 - equals to 8px */
+      }
+
+      .p-b-3 {
+        padding-bottom: 1rem;
+        /* Bottom padding 3 - equals to 16px */
+      }
+
+      .p-b-4 {
+        padding-bottom: 1.5rem;
+        /* Bottom padding 4 - equals to 24px */
+      }
+
+      .p-b-5 {
+        padding-bottom: 3rem;
+        /* Bottom padding 5 - equals to 48px */
+      }
+
+      /* Padding Left */
+      .p-l-0 {
+        padding-left: 0;
+        /* Left padding 0 - equals to 0px */
+      }
+
+      .p-l-1 {
+        padding-left: 0.25rem;
+        /* Left padding 1 - equals to 4px */
+      }
+
+      .p-l-2 {
+        padding-left: 0.5rem;
+        /* Left padding 2 - equals to 8px */
+      }
+
+      .p-l-3 {
+        padding-left: 1rem;
+        /* Left padding 3 - equals to 16px */
+      }
+
+      .p-l-4 {
+        padding-left: 1.5rem;
+        /* Left padding 4 - equals to 24px */
+      }
+
+      .p-l-5 {
+        padding-left: 3rem;
+        /* Left padding 5 - equals to 48px */
+      }
+
+      /* Padding Right */
+      .p-r-0 {
+        padding-right: 0;
+        /* Right padding 0 - equals to 0px */
+      }
+
+      .p-r-1 {
+        padding-right: 0.25rem;
+        /* Right padding 1 - equals to 4px */
+      }
+
+      .p-r-2 {
+        padding-right: 0.5rem;
+        /* Right padding 2 - equals to 8px */
+      }
+
+      .p-r-3 {
+        padding-right: 1rem;
+        /* Right padding 3 - equals to 16px */
+      }
+
+      .p-r-4 {
+        padding-right: 1.5rem;
+        /* Right padding 4 - equals to 24px */
+      }
+
+      .p-r-5 {
+        padding-right: 3rem;
+        /* Right padding 5 - equals to 48px */
+      }
+
+      /* Margin */
+      [class*="m-1"] {
+        margin: 0.25rem;
+        /* Margin 1 - equals to 4px */
+      }
+
+      [class*="m-2"] {
+        margin: 0.5rem;
+        /* Margin 2 - equals to 8px */
+      }
+
+      [class*="m-3"] {
+        margin: 1rem;
+        /* Margin 3 - equals to 16px */
+      }
+
+      [class*="m-4"] {
+        margin: 1.5rem;
+        /* Margin 4 - equals to 24px */
+      }
+
+      [class*="m-5"] {
+        margin: 3rem;
+        /* Margin 5 - equals to 48px */
+      }
+
+      /* Margin Top */
+      .m-t-0 {
+        margin-top: 0;
+        /* Top margin 0 - equals to 0px */
+      }
+
+      .m-t-1 {
+        margin-top: 0.25rem;
+        /* Top margin 1 - equals to 4px */
+      }
+
+      .m-t-2 {
+        margin-top: 0.5rem;
+        /* Top margin 2 - equals to 8px */
+      }
+
+      .m-t-3 {
+        margin-top: 1rem;
+        /* Top margin 3 - equals to 16px */
+      }
+
+      .m-t-4 {
+        margin-top: 1.5rem;
+        /* Top margin 4 - equals to 24px */
+      }
+
+      .m-t-5 {
+        margin-top: 3rem;
+        /* Top margin 5 - equals to 48px */
+      }
+
+      /* Margin Bottom */
+      .m-b-0 {
+        margin-bottom: 0;
+        /* Bottom margin 0 - equals to 0px */
+      }
+
+      .m-b-1 {
+        margin-bottom: 0.25rem;
+        /* Bottom margin 1 - equals to 4px */
+      }
+
+      .m-b-2 {
+        margin-bottom: 0.5rem;
+        /* Bottom margin 2 - equals to 8px */
+      }
+
+      .m-b-3 {
+        margin-bottom: 1rem;
+        /* Bottom margin 3 - equals to 16px */
+      }
+
+      .m-b-4 {
+        margin-bottom: 1.5rem;
+        /* Bottom margin 4 - equals to 24px */
+      }
+
+      .m-b-5 {
+        margin-bottom: 3rem;
+        /* Bottom margin 5 - equals to 48px */
+      }
+
+      /* Margin Left */
+      .m-l-0 {
+        margin-left: 0;
+        /* Left margin 0 - equals to 0px */
+      }
+
+      .m-l-1 {
+        margin-left: 0.25rem;
+        /* Left margin 1 - equals to 4px */
+      }
+
+      .m-l-2 {
+        margin-left: 0.5rem;
+        /* Left margin 2 - equals to 8px */
+      }
+
+      .m-l-3 {
+        margin-left: 1rem;
+        /* Left margin 3 - equals to 16px */
+      }
+
+      .m-l-4 {
+        margin-left: 1.5rem;
+        /* Left margin 4 - equals to 24px */
+      }
+
+      .m-l-5 {
+        margin-left: 3rem;
+        /* Left margin 5 - equals to 48px */
+      }
+
+      /* Margin Right */
+      .m-r-0 {
+        margin-right: 0;
+        /* Right margin 0 - equals to 0px */
+      }
+
+      .m-r-1 {
+        margin-right: 0.25rem;
+        /* Right margin 1 - equals to 4px */
+      }
+
+      .m-r-2 {
+        margin-right: 0.5rem;
+        /* Right margin 2 - equals to 8px */
+      }
+
+      .m-r-3 {
+        margin-right: 1rem;
+        /* Right margin 3 - equals to 16px */
+      }
+
+      .m-r-4 {
+        margin-right: 1.5rem;
+        /* Right margin 4 - equals to 24px */
+      }
+
+      .m-r-5 {
+        margin-right: 3rem;
+        /* Right margin 5 - equals to 48px */
+      }
+
+      /* Padding */
+      [class*="p-1"] {
+        padding: 0.25rem;
+        /* Padding 1 - equals to 4px */
+      }
+
+      [class*="p-2"] {
+        padding: 0.5rem;
+        /* Padding 2 - equals to 8px */
+      }
+
+      [class*="p-3"] {
+        padding: 1rem;
+        /* Padding 3 - equals to 16px */
+      }
+
+      [class*="p-4"] {
+        padding: 1.5rem;
+        /* Padding 4 - equals to 24px */
+      }
+
+      [class*="p-5"] {
+        padding: 3rem;
+        /* Padding 5 - equals to 48px */
+      }
+    </style>
+
+    <!-- Responsive grid system  -->
+    <style>
+      /* Responsive Grid System */
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        margin: 0 -0.75rem;
+      }
+
+      .col {
+        flex: 1 1 0;
+        padding: 0 0.75rem;
+      }
+
+      @media (min-width: 576px) {
+        /* media queries for small columns */
+        .col-sm-1 {
+          flex: 0 0 8.33333333%;
+        }
+
+        .col-sm-2 {
+          flex: 0 0 16.66666667%;
+        }
+
+        .col-sm-3 {
+          flex: 0 0 25%;
+        }
+
+        .col-sm-4 {
+          flex: 0 0 33.33333333%;
+        }
+
+        .col-sm-5 {
+          flex: 0 0 41.66666667%;
+        }
+
+        .col-sm-6 {
+          flex: 0 0 50%;
+        }
+
+        .col-sm-7 {
+          flex: 0 0 58.33333333%;
+        }
+
+        .col-sm-8 {
+          flex: 0 0 66.66666667%;
+        }
+
+        .col-sm-9 {
+          flex: 0 0 75%;
+        }
+
+        .col-sm-10 {
+          flex: 0 0 83.33333333%;
+        }
+
+        .col-sm-11 {
+          flex: 0 0 91.66666667%;
+        }
+
+        .col-sm-12 {
+          flex: 0 0 100%;
+        }
+      }
+
+      @media (min-width: 768px) {
+        .col-md-1 {
+          flex: 0 0 8.33333333%;
+        }
+
+        .col-md-2 {
+          flex: 0 0 16.66666667%;
+        }
+
+        .col-md-3 {
+          flex: 0 0 25%;
+        }
+
+        .col-md-4 {
+          flex: 0 0 33.33333333%;
+        }
+
+        .col-md-5 {
+          flex: 0 0 41.66666667%;
+        }
+
+        .col-md-6 {
+          flex: 0 0 50%;
+        }
+
+        .col-md-7 {
+          flex: 0 0 58.33333333%;
+        }
+
+        .col-md-8 {
+          flex: 0 0 66.66666667%;
+        }
+
+        .col-md-9 {
+          flex: 0 0 75%;
+        }
+
+        .col-md-10 {
+          flex: 0 0 83.33333333%;
+        }
+
+        .col-md-11 {
+          flex: 0 0 91.66666667%;
+        }
+
+        .col-md-12 {
+          flex: 0 0 100%;
+        }
+      }
+
+      @media (min-width: 992px) {
+        .col-lg-1 {
+          flex: 0 0 8.33333333%;
+        }
+
+        .col-lg-2 {
+          flex: 0 0 16.66666667%;
+        }
+
+        .col-lg-3 {
+          flex: 0 0 25%;
+        }
+
+        .col-lg-4 {
+          flex: 0 0 33.33333333%;
+        }
+
+        .col-lg-5 {
+          flex: 0 0 41.66666667%;
+        }
+
+        .col-lg-6 {
+          flex: 0 0 50%;
+        }
+
+        .col-lg-7 {
+          flex: 0 0 58.33333333%;
+        }
+
+        .col-lg-8 {
+          flex: 0 0 66.66666667%;
+        }
+
+        .col-lg-9 {
+          flex: 0 0 75%;
+        }
+
+        .col-lg-10 {
+          flex: 0 0 83.33333333%;
+        }
+
+        .col-lg-11 {
+          flex: 0 0 91.66666667%;
+        }
+
+        .col-lg-12 {
+          flex: 0 0 100%;
+        }
+      }
+
+      @media (min-width: 1200px) {
+        .col-xl-1 {
+          flex: 0 0 8.33333333%;
+        }
+
+        .col-xl-2 {
+          flex: 0 0 16.66666667%;
+        }
+
+        .col-xl-3 {
+          flex: 0 0 25%;
+        }
+
+        .col-xl-4 {
+          flex: 0 0 33.33333333%;
+        }
+
+        .col-xl-5 {
+          flex: 0 0 41.66666667%;
+        }
+
+        .col-xl-6 {
+          flex: 0 0 50%;
+        }
+
+        .col-xl-7 {
+          flex: 0 0 58.33333333%;
+        }
+
+        .col-xl-8 {
+          flex: 0 0 66.66666667%;
+        }
+
+        .col-xl-9 {
+          flex: 0 0 75%;
+        }
+
+        .col-xl-10 {
+          flex: 0 0 83.33333333%;
+        }
+
+        .col-xl-11 {
+          flex: 0 0 91.66666667%;
+        }
+
+        .col-xl-12 {
+          flex: 0 0 100%;
+        }
+      }
+    </style>
+
+    <style>
+      body.logo {
+        background: linear-gradient(yellow, rgb(163, 163, 0));
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+      }
+
+      .an-entity-container {
+        width: 100vw;
+        height: 100vh;
+        animation: huerotate 10s infinite;
+      }
+
+      .an-entity {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+      }
+
+      @keyframes wiggles {
+        0% {
+          border-radius: 0px;
+        }
+
+        25% {
+          border-radius: 30%;
+        }
+
+        50% {
+          border-radius: 0%;
+        }
+
+        75% {
+          border-radius: 20px;
+        }
+
+        100% {
+          border-radius: 0px;
+        }
+      }
+
+      .an-entity:nth-child(0) {
+        width: 110vmax;
+        height: 110vmax;
+        transform: translate(-50%, -50%) rotate(0.1013416985rad);
+        background: var(--logo-lime);
+        animation: rotate-0 3.2s infinite 2000ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(1) {
+        width: 100.3615162889vmax;
+        height: 100.3615162889vmax;
+        transform: translate(-50%, -50%) rotate(0rad);
+        background: var(--logo-black);
+        animation: rotate-1 3.2s infinite 2080ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(2) {
+        width: 91.5675813801vmax;
+        height: 91.5675813801vmax;
+        transform: translate(-50%, -50%) rotate(0.1013416985rad);
+        background: var(--logo-lime);
+        animation: rotate-2 3.2s infinite 2160ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(3) {
+        width: 83.5441937292vmax;
+        height: 83.5441937292vmax;
+        transform: translate(-50%, -50%) rotate(0.202683397rad);
+        background: var(--logo-black);
+        animation: rotate-3 3.2s infinite 2240ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(4) {
+        width: 76.2238359982vmax;
+        height: 76.2238359982vmax;
+        transform: translate(-50%, -50%) rotate(0.3040250955rad);
+        background: var(--logo-lime);
+        animation: rotate-4 3.2s infinite 2320ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(5) {
+        width: 69.5449068921vmax;
+        height: 69.5449068921vmax;
+        transform: translate(-50%, -50%) rotate(0.405366794rad);
+        background: var(--logo-black);
+        animation: rotate-5 3.2s infinite 2400ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(6) {
+        width: 63.4512027806vmax;
+        height: 63.4512027806vmax;
+        transform: translate(-50%, -50%) rotate(0.5067084925rad);
+        background: var(--logo-lime);
+        animation: rotate-6 3.2s infinite 2480ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(7) {
+        width: 57.8914447401vmax;
+        height: 57.8914447401vmax;
+        transform: translate(-50%, -50%) rotate(0.608050191rad);
+        background: var(--logo-black);
+        animation: rotate-7 3.2s infinite 2560ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(8) {
+        width: 52.8188470389vmax;
+        height: 52.8188470389vmax;
+        transform: translate(-50%, -50%) rotate(0.7093918895rad);
+        background: var(--logo-lime);
+        animation: rotate-8 3.2s infinite 2640ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(9) {
+        width: 48.1907234314vmax;
+        height: 48.1907234314vmax;
+        transform: translate(-50%, -50%) rotate(0.810733588rad);
+        background: var(--logo-black);
+        animation: rotate-9 3.2s infinite 2720ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(10) {
+        width: 43.9681279512vmax;
+        height: 43.9681279512vmax;
+        transform: translate(-50%, -50%) rotate(0.9120752865rad);
+        background: var(--logo-lime);
+        animation: rotate-10 3.2s infinite 2800ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(11) {
+        width: 40.1155271779vmax;
+        height: 40.1155271779vmax;
+        transform: translate(-50%, -50%) rotate(1.013416985rad);
+        background: var(--logo-black);
+        animation: rotate-11 3.2s infinite 2880ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(12) {
+        width: 36.6005012209vmax;
+        height: 36.6005012209vmax;
+        transform: translate(-50%, -50%) rotate(1.1147586835rad);
+        background: var(--logo-lime);
+        animation: rotate-12 3.2s infinite 2960ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(13) {
+        width: 33.3934709043vmax;
+        height: 33.3934709043vmax;
+        transform: translate(-50%, -50%) rotate(1.216100382rad);
+        background: var(--logo-black);
+        animation: rotate-13 3.2s infinite 3040ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(14) {
+        width: 30.4674488555vmax;
+        height: 30.4674488555vmax;
+        transform: translate(-50%, -50%) rotate(1.3174420805rad);
+        background: var(--logo-lime);
+        animation: rotate-14 3.2s infinite 3120ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(15) {
+        width: 27.7978124054vmax;
+        height: 27.7978124054vmax;
+        transform: translate(-50%, -50%) rotate(1.418783779rad);
+        background: var(--logo-black);
+        animation: rotate-15 3.2s infinite 3200ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(16) {
+        width: 25.3620963865vmax;
+        height: 25.3620963865vmax;
+        transform: translate(-50%, -50%) rotate(1.5201254775rad);
+        background: var(--logo-lime);
+        animation: rotate-16 3.2s infinite 3280ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(17) {
+        width: 23.1398040874vmax;
+        height: 23.1398040874vmax;
+        transform: translate(-50%, -50%) rotate(1.621467176rad);
+        background: var(--logo-black);
+        animation: rotate-17 3.2s infinite 3360ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(18) {
+        width: 21.1122347713vmax;
+        height: 21.1122347713vmax;
+        transform: translate(-50%, -50%) rotate(1.7228088745rad);
+        background: var(--logo-lime);
+        animation: rotate-18 3.2s infinite 3440ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(19) {
+        width: 19.2623263081vmax;
+        height: 19.2623263081vmax;
+        transform: translate(-50%, -50%) rotate(1.8241505731rad);
+        background: var(--logo-black);
+        animation: rotate-19 3.2s infinite 3520ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(20) {
+        width: 17.5745115958vmax;
+        height: 17.5745115958vmax;
+        transform: translate(-50%, -50%) rotate(1.9254922716rad);
+        background: var(--logo-lime);
+        animation: rotate-20 3.2s infinite 3600ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(21) {
+        width: 16.0345875617vmax;
+        height: 16.0345875617vmax;
+        transform: translate(-50%, -50%) rotate(2.0268339701rad);
+        background: var(--logo-black);
+        animation: rotate-21 3.2s infinite 3680ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(22) {
+        width: 14.6295956433vmax;
+        height: 14.6295956433vmax;
+        transform: translate(-50%, -50%) rotate(2.1281756686rad);
+        background: var(--logo-lime);
+        animation: rotate-22 3.2s infinite 3760ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(23) {
+        width: 13.3477127405vmax;
+        height: 13.3477127405vmax;
+        transform: translate(-50%, -50%) rotate(2.2295173671rad);
+        background: var(--logo-black);
+        animation: rotate-23 3.2s infinite 3840ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(24) {
+        width: 12.1781517239vmax;
+        height: 12.1781517239vmax;
+        transform: translate(-50%, -50%) rotate(2.3308590656rad);
+        background: var(--logo-lime);
+        animation: rotate-24 3.2s infinite 3920ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(25) {
+        width: 11.11107066vmax;
+        height: 11.11107066vmax;
+        transform: translate(-50%, -50%) rotate(2.4322007641rad);
+        background: var(--logo-black);
+        animation: rotate-25 3.2s infinite 4000ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(26) {
+        width: 10.1374899912vmax;
+        height: 10.1374899912vmax;
+        transform: translate(-50%, -50%) rotate(2.5335424626rad);
+        background: var(--logo-lime);
+        animation: rotate-26 3.2s infinite 4080ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(27) {
+        width: 9.2492169717vmax;
+        height: 9.2492169717vmax;
+        transform: translate(-50%, -50%) rotate(2.6348841611rad);
+        background: var(--logo-black);
+        animation: rotate-27 3.2s infinite 4160ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(28) {
+        width: 8.4387767251vmax;
+        height: 8.4387767251vmax;
+        transform: translate(-50%, -50%) rotate(2.7362258596rad);
+        background: var(--logo-lime);
+        animation: rotate-28 3.2s infinite 4240ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(29) {
+        width: 7.6993493432vmax;
+        height: 7.6993493432vmax;
+        transform: translate(-50%, -50%) rotate(2.8375675581rad);
+        background: var(--logo-black);
+        animation: rotate-29 3.2s infinite 4320ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(30) {
+        width: 7.0247124957vmax;
+        height: 7.0247124957vmax;
+        transform: translate(-50%, -50%) rotate(2.9389092566rad);
+        background: var(--logo-lime);
+        animation: rotate-30 3.2s infinite 4400ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(31) {
+        width: 6.4091890687vmax;
+        height: 6.4091890687vmax;
+        transform: translate(-50%, -50%) rotate(3.0402509551rad);
+        background: var(--logo-black);
+        animation: rotate-31 3.2s infinite 4480ms linear, wiggles 3s infinite;
+      }
+
+      .an-entity:nth-child(32) {
+        width: 5.847599392vmax;
+        height: 5.847599392vmax;
+        transform: translate(-50%, -50%) rotate(3.1415926536rad);
+        background: var(--logo-lime);
+        animation: rotate-32 3.2s infinite 4560ms linear, wiggles 3s infinite;
+      }
+
+      @keyframes rotate-0 {
+        50% {
+          transform: translate(-50%, -50%) rotate(3.142rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(6.284rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-1 {
+        50% {
+          transform: translate(-50%, -50%) rotate(3.2433416985rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(6.3853416985rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-2 {
+        50% {
+          transform: translate(-50%, -50%) rotate(3.344683397rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(6.486683397rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-3 {
+        50% {
+          transform: translate(-50%, -50%) rotate(3.4460250955rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(6.5880250955rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-4 {
+        50% {
+          transform: translate(-50%, -50%) rotate(3.547366794rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(6.689366794rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-5 {
+        50% {
+          transform: translate(-50%, -50%) rotate(3.6487084925rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(6.7907084925rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-6 {
+        50% {
+          transform: translate(-50%, -50%) rotate(3.750050191rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(6.892050191rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-7 {
+        50% {
+          transform: translate(-50%, -50%) rotate(3.8513918895rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(6.9933918895rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-8 {
+        50% {
+          transform: translate(-50%, -50%) rotate(3.952733588rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(7.094733588rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-9 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.0540752865rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(7.1960752865rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-10 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.155416985rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(7.297416985rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-11 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.2567586835rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(7.3987586835rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-12 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.358100382rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(7.500100382rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-13 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.4594420805rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(7.6014420805rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-14 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.560783779rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(7.702783779rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-15 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.6621254775rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(7.8041254775rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-16 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.763467176rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(7.905467176rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-17 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.8648088745rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.0068088745rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-18 {
+        50% {
+          transform: translate(-50%, -50%) rotate(4.9661505731rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.1081505731rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-19 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.0674922716rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.2094922716rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-20 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.1688339701rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.3108339701rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-21 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.2701756686rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.4121756686rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-22 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.3715173671rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.5135173671rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-23 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.4728590656rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.6148590656rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-24 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.5742007641rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.7162007641rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-25 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.6755424626rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.8175424626rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-26 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.7768841611rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(8.9188841611rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-27 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.8782258596rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(9.0202258596rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-28 {
+        50% {
+          transform: translate(-50%, -50%) rotate(5.9795675581rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(9.1215675581rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-29 {
+        50% {
+          transform: translate(-50%, -50%) rotate(6.0809092566rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(9.2229092566rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-30 {
+        50% {
+          transform: translate(-50%, -50%) rotate(6.1822509551rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(9.3242509551rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-31 {
+        50% {
+          transform: translate(-50%, -50%) rotate(6.2835926536rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(9.4255926536rad) scale(1);
+        }
+      }
+
+      @keyframes rotate-32 {
+        50% {
+          transform: translate(-50%, -50%) rotate(6.3849343521rad) scale(1.3);
+        }
+
+        100% {
+          transform: translate(-50%, -50%) rotate(9.5269343521rad) scale(1);
+        }
+      }
+
+      @keyframes huerotate {
+        100% {
+          filter: hue-rotate(360deg);
+        }
+      }
+
+      h1#logo-text {
+        background: rgb(0, 0, 0, 0.6);
+        font-size: 64px;
+        color: rgb(255, 255, 255);
+        text-shadow: 0px 0px 11px var(--logo-hue);
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin: 0;
+        width: 100%;
+        padding: 10px 40px;
+        text-align: center;
+        border-radius: 20px;
+        transform: translate(-50%, -50%);
+        font-family: Arial;
+        animation: logo-text-anim 2s forwards, bulge 0.5s infinite;
+      }
+
+      @keyframes bulge {
+        0% {
+          font-size: 70px;
+        }
+
+        50% {
+          font-size: 70px;
+        }
+
+        100% {
+          font-size: 70px;
+        }
+      }
+
+      @keyframes logo-text-anim {
+        0% {
+          top: -40px;
+          opacity: 0;
+        }
+
+        100% {
+          top: 50%;
+        }
+      }
+
+      p#logo-desc {
+        background: rgb(0, 0, 0, 0.6);
+        font-size: 34px;
+        color: rgb(255, 252, 255);
+        text-shadow: 0px 0px 11px var(--logo-hue);
+        position: absolute;
+        top: calc(50% + 100px);
+        left: 50%;
+        margin: 0;
+        width: 100%;
+        padding: 10px 40px;
+        text-align: center;
+        border-radius: 20px;
+        transform: translate(-50%, -50%);
+        font-family: Arial;
+        font-weight: 600;
+
+        animation: logo-desc-anim 3s forwards;
+      }
+
+      @keyframes logo-desc-anim {
+        0% {
+          top: 100%;
+          opacity: 0;
+        }
+
+        100% {
+          top: calc(50% + 120px);
+        }
+      }
+
+      .sketch {
+        width: fit-content;
+        height: fit-content;
+        margin: 0;
+        padding: 0;
+      }
+      .wrapper {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <noscript> Please enable JavaScript to view this application. </noscript>
+    <div id="app-1">
+      <nav class="navbar p-l-4">
+        <div class="navbar-logo" onclick="scene(1);" style="cursor: pointer">
+          Gameapalooza <i class="material-icons">whatshot</i>
+        </div>
+        <span class="menu-icon material-icons" onclick="toggleMenu()"
+          >menu</span
+        >
+        <ul class="nav-links">
+          <li><a href="javascript:scene(1);toggleMenu();">Home</a></li>
+          <li><a href="javascript:scene(0);toggleMenu();">Settings</a></li>
+          <li><a href="javascript:scene(2);toggleMenu();">Games</a></li>
+        </ul>
+      </nav>
+      <div class="overlay" onclick="toggleMenu();"></div>
+      <!-- Scene 0 is settings-->
+      <div class="scene">
+        <div class="p-4">
+          <h1>Settings</h1>
+          <p>Theme:</p>
+          <select id="theme-selector"></select>
+
+          <p>Clear saved data from browser (local storage):</p>
+          <button onclick="clearLocalStorage();">Clear Data</button>
+        </div>
+      </div>
+      <div class="scene">
+        <div class="p-4">
+          <h1>Gameapalooza</h1>
+          <p style="line-height: 24px">
+            Welcome to
+            <a
+              href="https://www.khanacademy.org/computer-programming/team-bug-bashers/5072233106423808"
+              >Team Bug Bashers'</a
+            >
+            website entry to The Coding Olympics 2024 grand finale!
+          </p>
+          <ul style="line-height: 24px">
+            <li>Finished August 26, 2024</li>
+            <li>Pure ES6 and CSS3 for the app</li>
+            <li>Extremely customizable CSS using root variables</li>
+            <li>12 themes</li>
+            <li>Responsive navbar</li>
+            <li>Current theme gets saved to browser storage</li>
+            <li>Play games, view graphics, and more in 1 website!</li>
+          </ul>
+        </div>
+      </div>
+      <div class="scene">
+        <div class="p-4">
+          <h1>Games</h1>
+        </div>
+
+        <div class="p-4">
+          <h2>Catalog <i class="material-icons">library_books</i></h2>
+          <div id="app1bookstore" class="m-b-2"></div>
+
+          <h2>Your Cart <i class="material-icons">shopping_cart</i></h2>
+          <div id="app1cart" class="m-b-2 m-t-2"></div>
+
+          <div id="app1modal">
+            <div id="app1modalContent" style="width: 100%">
+              <button
+                onclick="app1modal.closeapp1modal()"
+                style="position: absolute; bottom: 10px; left: 30px"
+              >
+                <i class="material-icons">close</i> Close
+              </button>
+              <h3
+                id="app1bookTitle"
+                style="position: absolute; bottom: 10px; right: 30px"
+              ></h3>
+              <div id="app1chapterContent" style="margin-top: -100px">
+                <div class="wrapper"><canvas class="sketch"></canvas></div>
+              </div>
+              <div id="app1chapterAuthor" style="position: absolute; bottom: 40px;text-align:center;width:100%;">
+               
+              </div>
+              <button
+                id="app1prevChapter"
+                style="position: absolute; bottom: 60px; left: 30px;visibility:hidden;"
+              >
+                <i class="material-icons">arrow_back_ios</i> Previous
+              </button>
+              <button
+                id="app1nextChapter"
+                style="position: absolute; bottom: 60px; right: 30px;visibility:hidden;"
+              >
+                <i class="material-icons">arrow_forward_ios</i> Next
+              </button>
+            </div>
+          </div>
+
+          <div id="app-1-checkoutSummary"></div>
+        </div>
+      </div>
+
+      <div class="scene">
+        <div class="an-entity"></div>
+
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+        <div class="an-entity"></div>
+
+        <h1 id="logo-text">Bug Bashers</h1>
+        <p id="logo-desc">Led by @LeaferStudios</p>
+      </div>
+      <hr />
+      <footer class="p-2 text-center">
+        <p>
+          &copy; 2024 Website by
+          <a
+            href="https://www.khanacademy.org/profile/kaid_553656479258879622339276/projects"
+            target="_blank"
+            >LeaferStudios</a
+          >. Games programmed by respective owners.
+        </p>
+      </footer>
+    </div>
+
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/gh/Khan/processing-js@master/processing.js"
+    ></script>
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/gh/Mushy-Avocado/KA-exporter@main/exporter.js"
+    ></script>
+    <script>
+      console.log("Program ran.");
+    </script>
+    <script type="application/javascript"></script>
+    <script type="application/javascript">
+      var iterator = 0;
+      function program() {
+        println(iterator);
+        setTimeout(function(){
+          
+        if (iterator === 0) {
+        size(400, 600);
+          // All code goes here
+          /*
+        mirror
+    
+        hi, dw im not leaving ka, but im going like 1/10-active.
+        
+        i’ve been having dpdr for a while now and ive only told my closest friends… i just wanna take a little break from the screen to see if it helps lol
+        i’ll still come online to ka for a quick glance at the hl lol often, but i don’t think i’ll be making programs in a while
+        this graphics just shows what it feels like rn, its like watching myself through the mirror - connected but not really. and yeah i have associative synesthesia so like the grayness is what dpdr feels like and the colors in the reflection are reality in color, sort of. dpdr is weird and kind of scary but hopefully this will be over when i actually face it instead of ignoring it
+        i also do feel like i don’t really know myself, partially because of dpdr and partially because i’ve always tried to blend in 
+        i probably need to tell my fam but as a procrastinator ive been putting that off for like years now lol
+        
+        @bugbashers - im sry but i don’t think ill be active for the final project, wishing you guys luck <3
+        
+        this took ~2 hours
+        sorry it's bad lol and possibly laggy
+    
+    */
+
+          //hand
+          function hand(x, y, s) {
+            pushMatrix();
+            scale(s, 1);
+            translate(x, y);
+            beginShape();
+            curveVertex(111, 408);
+            curveVertex(210, 381);
+            curveVertex(246, 346);
+            curveVertex(268, 321);
+            curveVertex(275, 312);
+            curveVertex(268, 308);
+            curveVertex(246, 313);
+            curveVertex(219, 338);
+            curveVertex(203, 338);
+            curveVertex(196, 322);
+            curveVertex(210, 284);
+            curveVertex(224, 261);
+            curveVertex(242, 244);
+            curveVertex(261, 230);
+            curveVertex(262, 219);
+            curveVertex(234, 229);
+            curveVertex(206, 251);
+            curveVertex(188, 275);
+            curveVertex(194, 264);
+            curveVertex(201, 249);
+            curveVertex(219, 226);
+            curveVertex(230, 208);
+            curveVertex(230, 198);
+            curveVertex(224, 195);
+            curveVertex(207, 214);
+            curveVertex(183, 238);
+            curveVertex(171, 269);
+            curveVertex(184, 239);
+            curveVertex(197, 224);
+            curveVertex(203, 211);
+            curveVertex(197, 202);
+            curveVertex(177, 232);
+            curveVertex(169, 248); //
+            curveVertex(165, 254);
+            curveVertex(156, 284);
+            curveVertex(166, 257);
+            curveVertex(169, 241);
+            curveVertex(165, 231);
+            curveVertex(161, 235);
+            curveVertex(146, 272);
+            curveVertex(140, 303);
+            curveVertex(134, 330);
+            curveVertex(125, 359);
+            curveVertex(107, 387);
+            curveVertex(-9, 569);
+            curveVertex(48, 615);
+            curveVertex(123, 476);
+            curveVertex(152, 426);
+            curveVertex(178, 398);
+            curveVertex(198, 386);
+            curveVertex(210, 381);
+            endShape();
+            popMatrix();
+          }
+
+          //bg?
+          background(111, 109, 130);
+          noStroke();
+
+          //reflection
+          fill(54, 42, 42);
+          hand(-669, 0, -0.7);
+
+          //colors
+          var f = createGraphics(width, height, P2D);
+          f.translate(18, 88);
+          f.background(0, 0);
+          f.noStroke();
+          f.fill(106, 166, 66, 150);
+          f.ellipse(117, 184, 250, 350);
+          f.fill(194, 189, 97, 150);
+          f.ellipse(103, 408, 350, 250);
+          f.fill(184, 131, 66, 150);
+          f.ellipse(250, 444, 250, 250);
+          f.fill(184, 94, 66, 150);
+          f.ellipse(462, 334, 250, 350);
+          f.fill(184, 66, 66, 150);
+          f.ellipse(346, 118, 212, 223);
+          f.filter(BLUR, 45);
+          image(f, 0, 0);
+
+          //reflections
+          var r = createGraphics(width, height, P2D);
+          r.translate(9, -30);
+          r.scale(1.2);
+          r.background(0, 0);
+          r.noStroke();
+          r.fill(255, 70);
+          r.beginShape();
+          r.vertex(186, 93);
+          r.vertex(74, 379);
+          r.vertex(99, 458);
+          r.vertex(288, 24);
+          r.vertex(336, 68);
+          r.vertex(177, 473);
+          r.vertex(245, 555);
+          r.vertex(376, 121);
+          r.vertex(364, 6);
+          r.vertex(204, 54);
+          r.vertex(187, 93);
+          r.endShape();
+          r.filter(BLUR, 20);
+
+          image(r, 0, 0);
+
+          //cheating masking
+          var m = createGraphics(width, height, P2D);
+          m.background(0, 0);
+          m.noStroke();
+          m.fill(85, 84, 87);
+          m.beginShape();
+          m.curveVertex(94, 315);
+          m.curveVertex(85, 173);
+          m.curveVertex(193, 105);
+          m.curveVertex(267, 48);
+          m.curveVertex(336, 74);
+          m.curveVertex(395, 152);
+          m.curveVertex(505, 164);
+          m.curveVertex(505, -48);
+          m.curveVertex(-10, -48);
+          m.curveVertex(-10, 629);
+          m.curveVertex(422, 650);
+          m.curveVertex(422, 345);
+          m.curveVertex(396, 430);
+          m.curveVertex(331, 483);
+          m.curveVertex(266, 497);
+          m.curveVertex(174, 457);
+          m.curveVertex(103, 439);
+          m.curveVertex(84, 371);
+          m.curveVertex(92, 300);
+          m.curveVertex(85, 173);
+          m.curveVertex(385, -172);
+          m.endShape();
+          m.filter(BLUR, 2);
+          image(m, 0, 0);
+
+          //hand
+          fill(74, 60, 56);
+          hand(0, 0, 1);
+
+          //sugar
+          textFont(createFont("monospace"), 15);
+          fill(255, 150);
+          text("sugar", 340, 580);
+
+          //texture
+          for (var i = 0; i < 50000; i++) {
+            strokeWeight(random(0.1, 1.5));
+            stroke(242, random(2, 20));
+            point(random(width), random(height));
+          }
+
+          for (var i = 0; i < 50000; i++) {
+            strokeWeight(random(0.1, 1.5));
+            stroke(20, random(2, 20));
+            point(random(width), random(height));
+          }
+
+          var all = get();
+
+          image(all, 0, 0);
+
+          keyPressed = function () {
+            if (keyCode === UP) {
+              scale(0.7, 1);
+              translate(90, 0);
+              background(255);
+              image(all, 0, 0);
+            } else {
+              scale(1, 1);
+              translate(0, 0);
+              image(all, 0, 0);
+            }
+          };
+        } else if (iterator === 1) {
+          size(600, 600);
+          //big credit to bennimus for his 3D class, which is way undervoted. It is incredible.
+          var B3D = function () {
+            this.dist = function (x1, y1, z1, x2, y2, z2) {
+              var x = x2 - x1,
+                y = y2 - y1,
+                z = z2 - z1;
+              return sqrt(x * x + y * y + z * z);
+            };
+            this.pitch = 0;
+            this.yaw = 0;
+            this.roll = 0;
+            this.camera = function (p, y, r) {
+              this.pitch = p;
+              this.yaw = y;
+              this.roll = r;
+              this.sp = sin(p);
+              this.cp = cos(p);
+              this.sy = sin(y);
+              this.cy = cos(y);
+              this.sr = sin(r);
+              this.cr = cos(r);
+            };
+            this.sp = 0;
+            this.cp = 1;
+            this.sy = 0;
+            this.cy = 1;
+            this.sr = 0;
+            this.cr = 1;
+            this.c = [255, 0, 0, 255];
+            this.fill = function (r, g, b, a) {
+              this.c = [r, g, b, a];
+            };
+            this.psp = (width + height) / 2;
+            this.M3D = function (A) {
+              var hA = A.length;
+              if (hA) {
+                var B = [];
+                var C = [];
+                for (var i = 0; i < hA; i++) {
+                  if (A[i]) {
+                    B[i] = [];
+                    B[i][0] = A[i][0] * this.cy - A[i][2] * this.sy;
+                    B[i][2] = A[i][0] * this.sy + A[i][2] * this.cy;
+                    A[i][2] = B[i][2];
+                    B[i][1] = A[i][1] * this.cp - A[i][2] * this.sp;
+                    B[i][2] = A[i][1] * this.sp + A[i][2] * this.cp;
+                    C[i] = [];
+                    C[i][0] = (B[i][0] * this.psp) / (this.psp + B[i][2]);
+                    C[i][1] = (B[i][1] * this.psp) / (this.psp + B[i][2]);
+                  }
+                }
+                return C;
+              }
+              return null;
+            };
+            this.point = function (x, y, z) {
+              var M = this.M3D([[x, y, z]]);
+              point(M[0][0], M[0][1]);
+            };
+            this.line = function (x1, y1, z1, x2, y2, z2) {
+              var M = this.M3D([
+                [x1, y1, z1],
+                [x2, y2, z2],
+              ]);
+              line(M[0][0], M[0][1], M[1][0], M[1][1]);
+            };
+            this.cross2D = function (x1, y1, x2, y2) {
+              return x1 * y2 - x2 * y1;
+            };
+            this.tri = function (x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+              var M = this.M3D([
+                [x1, y1, z1],
+                [x2, y2, z2],
+                [x3, y3, z3],
+              ]);
+              triangle(M[0][0], M[0][1], M[1][0], M[1][1], M[2][0], M[2][1]);
+            };
+            this.face = function (x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+              var M = this.M3D([
+                [x1, y1, z1],
+                [x2, y2, z2],
+                [x3, y3, z3],
+              ]);
+              var c =
+                this.cross2D(
+                  M[1][0] - M[0][0],
+                  M[1][1] - M[0][1],
+                  M[2][0] - M[0][0],
+                  M[2][1] - M[0][1]
+                ) /
+                (dist(M[1][0], M[1][1], M[0][0], M[0][1]) +
+                  dist(M[2][0], M[2][1], M[1][0], M[1][1])) /
+                3;
+              fill(this.c[0] * c, this.c[1] * c, this.c[2] * c, this.c[3]);
+              if (c > 0) {
+                triangle(M[0][0], M[0][1], M[1][0], M[1][1], M[2][0], M[2][1]);
+              }
+            };
+            this.quad = function (x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+              var x4 = x2 + x3 - x1;
+              var y4 = y2 + y3 - y1;
+              var z4 = z2 + z3 - z1;
+              var M = this.M3D([
+                [x1, y1, z1],
+                [x2, y2, z2],
+                [x3, y3, z3],
+                [x4, y4, z4],
+              ]);
+              fill(this.c[0], this.c[1], this.c[2], this.c[3]);
+              quad(
+                M[0][0],
+                M[0][1],
+                M[1][0],
+                M[1][1],
+                M[3][0],
+                M[3][1],
+                M[2][0],
+                M[2][1]
+              );
+            };
+            this.quadface = function (x1, y1, z1, x2, y2, z2, x3, y3, z3) {
+              var x4 = x2 + x3 - x1;
+              var y4 = y2 + y3 - y1;
+              var z4 = z2 + z3 - z1;
+              var M = this.M3D([
+                [x1, y1, z1],
+                [x2, y2, z2],
+                [x3, y3, z3],
+                [x4, y4, z4],
+              ]);
+              var c =
+                this.cross2D(
+                  M[1][0] - M[0][0],
+                  M[1][1] - M[0][1],
+                  M[2][0] - M[0][0],
+                  M[2][1] - M[0][1]
+                ) /
+                (dist(M[1][0], M[1][1], M[0][0], M[0][1]) +
+                  dist(M[2][0], M[2][1], M[1][0], M[1][1])) /
+                3;
+              fill(this.c[0] * c, this.c[1] * c, this.c[2] * c, this.c[3]);
+              if (c > 0) {
+                quad(
+                  M[0][0],
+                  M[0][1],
+                  M[1][0],
+                  M[1][1],
+                  M[3][0],
+                  M[3][1],
+                  M[2][0],
+                  M[2][1]
+                );
+              }
+            };
+          };
+          var B = new B3D();
+          var cubeS = [];
+          var cubeX = [];
+          var cubeY = [];
+          var cubeR = [];
+          var cube2R = [];
+          var cubeF = [];
+          var cubeL = [];
+          for (var i = 0; i < 100; i++) {
+            cubeX.push(random(50, 570));
+            cubeY.push(random(100, 550));
+            cubeS.push(cubeY[cubeX.length - 1] / 1500);
+            cubeR.push(random(0, 1000));
+            cube2R.push(random(0, 1000));
+            cubeF.push(random(-5, 15));
+            cubeL.push(round(random(0, 1)));
+            if (cubeL[cubeL.length - 1] === 0) {
+              cubeL[cubeL.length - 1] = -1;
+            }
+          }
+          var drawCube = function (x, y, size, num, flash) {
+            translate(x, y);
+            scale(size);
+            B.camera(cubeR[num] / 4, cube2R[num], 0);
+            B.fill(255, 255, 255, 0);
+            strokeWeight(4);
+            stroke(200, 200, 200);
+            B.quadface(-50, -50, -50, 50, -50, -50, -50, 50, -50);
+            B.quadface(50, -50, -50, 50, -50, 50, 50, 50, -50);
+            B.quadface(-50, -50, 50, -50, 50, 50, 50, -50, 50);
+            B.quadface(-50, -50, -50, -50, 50, -50, -50, -50, 50);
+            B.quadface(-50, -50, -50, -50, -50, 50, 50, -50, -50);
+            B.quadface(-50, 50, -50, 50, 50, -50, -50, 50, 50);
+            resetMatrix();
+            for (var i = 0; i < 20; i++) {
+              noStroke();
+              fill(255, 255, 255, 10 + flash / 4);
+              ellipse(x, y, size * (i * 10 + flash), size * (i * 10 + flash));
+            }
+          };
+          draw = function () {
+            background(0, 0, 0);
+            noStroke();
+            for (var i = 0; i < 200; i++) {
+              fill(0, 255, 255, i * 0.5);
+              rect(0, 200 + i * 2, 600, 4);
+            }
+            for (var i = 0; i < cubeS.length; i++) {
+              drawCube(cubeX[i], cubeY[i], cubeS[i], i, cubeF[i]);
+              cubeR[i] += 3;
+              cube2R[i] += 3;
+              if (cubeF[i] > 15) {
+                cubeL[i] = -1;
+              }
+              if (cubeF[i] < -5) {
+                cubeL[i] = 1;
+              }
+              cubeF[i] += cubeL[i];
+            }
+            fill(255, 255, 255);
+            translate(300, 300);
+            stroke(200, 200, 200);
+            strokeWeight(1);
+            beginShape();
+            vertex(0, -90);
+            vertex(80, -50);
+            vertex(80, 50);
+            vertex(0, 90);
+            vertex(-80, 50);
+            vertex(-80, -50);
+            vertex(0, -90);
+            endShape();
+            line(-80, -50, 0, -10);
+            line(0, -10, 80, -50);
+            line(0, -10, 0, 90);
+            resetMatrix();
+            fill(0, 0, 0);
+            textSize(60);
+            translate(230, 335);
+            rotate(10);
+            textFont(createFont("savoye let"));
+            text("け", 0, 0);
+            textSize(25);
+            rotate(15);
+            text("WORLD", -2, 15);
+            textSize(60);
+            resetMatrix();
+            translate(310, 340);
+            rotate(-10);
+            text("む", 0, 0);
+            textSize(25);
+            rotate(-17);
+            text("TRIGGER", -22, 34);
+            resetMatrix();
+          };
+        } else if (iterator === 2) {
+        } else if (iterator === 3) {
+        } else if (iterator === 4) {
+        }
+
+      }, 1000);
+      }
+
+      function $(selector) {
+        if (selector.startsWith("#")) {
+          return document.getElementById(selector.substring(1));
+        } else {
+          return document.querySelectorAll(selector);
+        }
+      }
+      function clearLocalStorage() {
+        var clearLocalStoragePrompt = window
+          .prompt("Are you sure? (y/n)")
+          .toLowerCase();
+        if (
+          clearLocalStoragePrompt === "y" ||
+          clearLocalStoragePrompt === "yeah" ||
+          clearLocalStoragePrompt === "yes" ||
+          clearLocalStoragePrompt === "okay" ||
+          clearLocalStoragePrompt === "ok" ||
+          clearLocalStoragePrompt === "true"
+        ) {
+          localStorage.clear();
+          window.location.reload();
+        } else {
+          alert("Data not cleared.");
+        }
+      }
+      function toggleMenu() {
+        var navLinks = document.querySelector(".nav-links");
+        if (navLinks.classList) {
+          navLinks.classList.toggle("open");
+          document.querySelector(".overlay").classList.toggle("open");
+        } else {
+          // Fallback for older browsers without classList
+          var classes = navLinks.className.split(" ");
+          var i = classes.indexOf("open");
+
+          if (i >= 0) {
+            classes.splice(i, 1);
+          } else {
+            classes.push("open");
+          }
+
+          navLinks.className = classes.join(" ");
+
+          var classes2 = document
+            .querySelector(".overlay")
+            .className.split(" ");
+          var i2 = classes2.indexOf("open");
+
+          if (i2 >= 0) {
+            classes2.splice(i2, 1);
+          } else {
+            classes2.push("open");
+          }
+
+          document.querySelector(".overlay").className = classes2.join(" ");
+        }
+      }
+      function scene(index) {
+        window.scroll({
+          top: 0,
+          left: 0,
+          behavior: "smooth",
+        });
+        for (var i = 0; i < $(".scene").length; i++) {
+          $(".scene")[i].style.display = "none";
+        }
+        $(".scene")[index].style.display = "block";
+      }
+      function runLogo() {
+        scene(3);
+        document.body.querySelector("nav").style.display = "none";
+        document.body.querySelector("footer").style.display = "none";
+        document.body.querySelector("hr").style.display = "none";
+        document.body.classList.toggle("logo");
+        if (window.innerWidth >= 700) {
+          for (
+            let i = 0;
+            i < document.body.getElementsByClassName("an-entity").length;
+            i++
+          ) {
+            document.body.getElementsByClassName("an-entity")[i].style.display =
+              "none";
+          }
+        }
+        setTimeout(function () {
+          document.body.querySelector("footer").style.display = "";
+          document.body.querySelector("hr").style.display = "";
+          scene(1);
+          document.body.querySelector("nav").style.display = "";
+          document.body.classList.toggle("logo");
+        }, 6000);
+      }
+      //runLogo();
+      scene(2);
+
+      const app1bookstore = {
+        books: [
+          {
+            title: "Games",
+            id: "YL",
+            chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
+            iterator: 0,
+          },
+          {
+            title: "Graphics",
+            id: "EJ",
+            chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/world-trigger-logo/4570740240596992" target="_blank">The Behemoth</a>`],
+           iterator: 1,
+          },
+          {
+            title: "Misc.",
+            id: "MM",
+            chapters: [`Author: <a href="https://www.khanacademy.org/computer-programming/mirror/5277222439403520" target="_blank">sugar</a>`],
+           iterator: 2,
+          },
+        ],
+        removeBook(bookId) {
+          this.books = this.books.filter((book) => book.id !== bookId);
+          this.displayapp1bookstore();
+        },
+        displayapp1bookstore() {
+          const renderTarget = document.getElementById("app1bookstore");
+          const bookList = this.books.map(
+            (book) =>
+              `<div class='book-card'>
+                    <p>${book.title}</p>
+                    <button onclick="app1bookstore.addToapp1cart('${book.id}')">Bookmark <i class='material-icons'>add</i></button>
+                    <button onclick="app1bookstore.readBook('${book.id}')">Explore <i class='material-icons'>arrow_forwards</i></button>
+                    <button onclick="app1bookstore.removeBook('${book.id}')">Delete <i class='material-icons'>delete</i></button>
+                </div>`
+          );
+          renderTarget.innerHTML = bookList.join("");
+        },
+        addToapp1cart(bookId) {
+          const bookToAdd = this.books.find((book) => book.id === bookId);
+          if (bookToAdd) {
+            shoppingapp1cart.addItemToapp1cart(bookToAdd);
+          }
+        },
+        readBook(bookId) {
+          const bookToRead = this.books.find((book) => book.id === bookId);
+          if (bookToRead) {
+            app1modal.openapp1modal(bookToRead);
+          }
+        },
+      };
+
+      const shoppingapp1cart = {
+        itemsInapp1cart: [],
+        addItemToapp1cart(book) {
+          this.itemsInapp1cart.push(book);
+          this.displayapp1cart();
+        },
+        removeItemFromapp1cart(bookId) {
+          this.itemsInapp1cart = this.itemsInapp1cart.filter(
+            (item) => item.id !== bookId
+          );
+          this.displayapp1cart();
+        },
+        displayapp1cart() {
+          const renderTarget = document.getElementById("app1cart");
+          if (this.itemsInapp1cart.length > 0) {
+            const app1cartList = this.itemsInapp1cart.map(
+              (item) =>
+                `<div>
+                        <p>${item.title}</p>
+                        <button onclick="shoppingapp1cart.removeItemFromapp1cart('${item.id}')">Remove from Cart</button>
+                    </div>`
+            );
+            renderTarget.innerHTML =
+              app1cartList.join("") +
+              "<button id='checkout' onclick='shoppingapp1cart.checkout()'>Check Out</button>";
+          } else {
+            renderTarget.innerHTML = "<p>Your cart is empty.</p>";
+          }
+        },
+        checkout() {
+          let checkoutSummary = "Checkout Summary:\n";
+          this.itemsInapp1cart.forEach((item) => {
+            const chaptersRead = app1modal.getChaptersRead(item.id);
+            checkoutSummary += `${
+              item.title
+            }:\n  Chapters read: ${chaptersRead.join(", ")}\n`;
+          });
+          document.querySelector("#app-1-checkoutSummary").innerHTML =
+            checkoutSummary;
+        },
+      };
+      const app1modal = {
+        currentBook: null,
+        currentChapterIndex: 0,
+        chaptersRead: {},
+        openapp1modal(book) {
+          this.currentBook = book;
+          this.currentChapterIndex = 0;
+          this.displayChapter();
+          document.getElementById("app1modal").style.display = "flex";
+
+        },
+        closeapp1modal() {
+          document.getElementById("app1modal").style.display = "none";
+        },
+        displayChapter() {
+          
+          const titleElement = document.getElementById("app1bookTitle");
+          const contentElement = document.getElementById("app1chapterAuthor");
+          const chapter = this.currentBook.chapters[this.currentChapterIndex];
+
+          titleElement.innerHTML = this.currentBook.title;
+          contentElement.innerHTML = chapter;
+          iterator = this.currentBook.iterator;
+          if (!this.chaptersRead[this.currentBook.id]) {
+            this.chaptersRead[this.currentBook.id] = [];
+          }
+          if (!this.chaptersRead[this.currentBook.id].includes(chapter)) {
+            this.chaptersRead[this.currentBook.id].push(chapter);
+          }
+
+          this.updateButtons();
+
+          runPJS(program);
+        },
+        app1nextChapter() {
+          if (this.currentChapterIndex < this.currentBook.chapters.length - 1) {
+            this.currentChapterIndex++;
+            this.displayChapter();
+          }
+        },
+        app1prevChapter() {
+          if (this.currentChapterIndex > 0) {
+            this.currentChapterIndex--;
+            this.displayChapter();
+          }
+        },
+        updateButtons() {
+          document.getElementById("app1prevChapter").disabled =
+            this.currentChapterIndex === 0;
+          document.getElementById("app1nextChapter").disabled =
+            this.currentChapterIndex === this.currentBook.chapters.length - 1;
+        },
+        getChaptersRead(bookId) {
+          return this.chaptersRead[bookId] || [];
+        },
+      };
+
+      document
+        .getElementById("app1nextChapter")
+        .addEventListener("click", () => app1modal.app1nextChapter());
+      document
+        .getElementById("app1prevChapter")
+        .addEventListener("click", () => app1modal.app1prevChapter());
+
+      app1bookstore.displayapp1bookstore();
+
+      const themeSelector = document.getElementById("theme-selector");
+      const themes = {
+        "default-theme": "Default (red)",
+        "dark-theme": "Dark",
+        "green-theme": "Green",
+        "blue-theme": "Blue",
+        "brown-theme": "Brown",
+        "orange-theme": "Orange",
+        "pink-theme": "Pink",
+        "yellow-theme": "Yellow",
+        "purple-theme": "Purple",
+        "teal-theme": "Teal",
+        "maroon-theme": "Maroon",
+        "cyan-theme": "Cyan",
+      };
+
+      // Populate theme selector options
+      for (const theme in themes) {
+        const option = document.createElement("option");
+        option.value = theme;
+        option.text = themes[theme];
+        themeSelector.appendChild(option);
+      }
+
+      // Load saved theme or set default
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        document.body.classList.add(savedTheme);
+        // Set the dropdown to the saved theme
+        themeSelector.value = savedTheme;
+      } else {
+        document.body.classList.add("default-theme"); // Default theme
+      }
+
+      // Event listener for theme change
+      themeSelector.addEventListener("change", (event) => {
+        const selectedTheme = event.target.value;
+
+        // Remove all existing theme classes
+        for (const theme in themes) {
+          document.body.classList.remove(theme);
+        }
+
+        // Apply the selected theme
+        document.body.classList.add(selectedTheme);
+        localStorage.setItem("theme", selectedTheme);
+      });
+
+    </script>
+
+    <script type="application/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+    <script type>
+      // credit to Bluebird@birdwatcher03 for this thumbnail script (only needed on Khan Academy, makes the thumbnail resolution better)
+      var r = 600;
+      var s = document.documentElement.clientWidth;
+      window.parent.html2canvas = (e) => {
+        try {
+          html2canvas(document.body, {
+            width: s,
+            height: s,
+            useCORS: true,
+          })
+            .then((e) => {
+              var c = document.createElement("canvas");
+              c.width = r;
+              c.height = r;
+              c.getContext("2d").drawImage(
+                e,
+                0,
+                0,
+                e.width,
+                e.height,
+                0,
+                0,
+                r,
+                r
+              );
+              window.top.postMessage(c.toDataURL(), "*");
+            })
+            .catch((e) => {
+              alert("Thumbnail Script Error: " + e);
+            });
+        } catch {
+          window.top.postMessage(
+            document.createElement("canvas").toDataURL(),
+            "*"
+          );
+        }
+      };
+    </script>
+  </body>
+
+  <!--
+NOTE TO SELF: Keep this, this is required for my personal website's API and for Khan Academy projects.
+
+MIT License: You cannot plagiarize this program! You must always keep the license below or else I will submit a DMCA takedown notice. If it is on Khan Academy, it will get taken down.
+-->
+  <!--
+MIT License
+
+Copyright (c) 2024 LeaferStudios
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+--></html>
+
+<!-- © 2024 by LeaferStudios -->
